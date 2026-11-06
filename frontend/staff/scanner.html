@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authorities QR Scanner | Ministry of Health, The Gambia</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body class="min-h-screen flex flex-col bg-[#f0f4f9] text-slate-800 pb-16">
+
+    <!-- ====================================================================== -->
+    <!-- FLIGHT LINE LOADING SCREEN                                             -->
+    <!-- Plane mounted at the moving edge of the loading line                  -->
+    <!-- Secondary Brand Background Color (#0b2545)                             -->
+    <!-- ====================================================================== -->
+    <div id="page-loader" class="fixed inset-0 z-[100] bg-[#0b2545] flex flex-col items-center justify-center p-4 sm:p-6 transition-all duration-700 ease-out text-white">
+        <div class="max-w-xl w-full flex flex-col items-center text-center space-y-8 px-4">
+            
+            <!-- Official Coat of Arms & Government Title (Bold, Bigger, Properly Aligned) -->
+            <div class="flex flex-col items-center space-y-3">
+                <img src="../assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-2xl">
+                <div class="space-y-1">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-wide uppercase text-white drop-shadow-sm">
+                        Ministry of Health
+                    </h1>
+                    <h2 class="text-base sm:text-lg font-bold tracking-widest uppercase text-sky-400">
+                        The Gambia
+                    </h2>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-300 tracking-normal pt-0.5">
+                        Airport Screening Officer QR Terminal
+                    </p>
+                </div>
+            </div>
+
+            <!-- The Loading Line with Plane Mounted Directly at the Edge -->
+            <div class="w-full max-w-md sm:max-w-lg space-y-3 pt-2">
+                <!-- Track Container -->
+                <div class="w-full bg-slate-900/90 rounded-full h-3 p-0.5 border border-slate-700 shadow-inner relative overflow-visible">
+                    <!-- Progress Line (Expanding 0% to 100%) -->
+                    <div id="loader-line" class="h-full bg-gradient-to-r from-red-600 via-sky-400 to-emerald-400 rounded-full relative transition-[width] duration-75 ease-linear shadow-[0_0_12px_rgba(56,189,248,0.5)]" style="width: 0%;">
+                        <!-- Airplane: Mounted right at the leading edge of the line -->
+                        <div class="absolute -right-5 sm:-right-6 top-1/2 -translate-y-1/2 pointer-events-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] z-10">
+                            <svg width="48" height="28" viewBox="-32 -16 80 32" class="w-10 h-6 sm:w-12 sm:h-7 overflow-visible">
+                                <!-- Fuselage with Gambian Tricolor Livery -->
+                                <path d="M -26,0 C -26,-5 -16,-8 -2,-8 L 24,-8 C 34,-8 40,-4 44,0 C 40,4 34,8 24,8 L -2,8 C -16,8 -26,5 -26,0 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+                                <path d="M 34,-4 C 38,-2 40,-1 41,0 L 36,0 Z" fill="#0b2545"/>
+                                <!-- Gambian Livery Stripes -->
+                                <path d="M -16,-2.5 L 30,-2.5" stroke="#ce1126" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M -16,0 L 32,0" stroke="#0c1c8c" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M -16,2.5 L 28,2.5" stroke="#3a7728" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="-10" y1="-5" x2="22" y2="-5" stroke="#64748b" stroke-width="1.2" stroke-dasharray="2 2"/>
+                                <!-- Wing & Engine -->
+                                <path d="M -2,0 L 14,14 L 7,14 L -8,0 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                                <line x1="7" y1="13" x2="13" y2="13" stroke="#ce1126" stroke-width="1.5"/>
+                                <rect x="2" y="7" width="11" height="5" rx="2.5" fill="#07172c"/>
+                                <ellipse cx="13" cy="9.5" rx="1.5" ry="2.2" fill="#38bdf8"/>
+                                <ellipse cx="0" cy="9.5" rx="3" ry="1.5" fill="rgba(56,189,248,0.85)"/>
+                                <!-- Tail Fin with Gambian Stripes -->
+                                <path d="M -23,-2 L -31,-16 L -20,-16 L -13,-2 Z" fill="#0c1c8c"/>
+                                <path d="M -29,-13 L -21,-13" stroke="#ce1126" stroke-width="2"/>
+                                <path d="M -26,-7 L -17,-7" stroke="#3a7728" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text & Percentage (Properly Aligned, Bold, Bigger) -->
+                <div class="flex items-center justify-between w-full px-1 text-slate-200">
+                    <span id="loader-status" class="text-sm sm:text-base font-bold text-sky-300 tracking-wide">
+                        Initializing QR Scanner Engine...
+                    </span>
+                    <span id="loader-percent" class="text-base sm:text-lg font-black font-mono text-white tracking-wider">
+                        0%
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Header (Exact Match to Mobile Mockup Screen 4) -->
+    <header class="bg-[#0b2545] text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-2.5 text-white">
+                <img src="../assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-9 h-9 object-contain drop-shadow">
+                <div>
+                    <div class="text-xs font-bold leading-tight">Ministry of Health</div>
+                    <div class="text-[11px] text-slate-300">The Gambia</div>
+                </div>
+            </a>
+
+            <!-- Officer Profile -->
+            <div class="flex items-center text-xs font-semibold text-white bg-slate-800/80 px-2.5 py-1.5 rounded-md border border-slate-700">
+                <i class="fa-solid fa-user mr-1.5 text-slate-300"></i> Officer <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Scanner Container -->
+    <main class="max-w-md mx-auto px-4 py-6 flex-1 w-full flex flex-col space-y-4">
+        
+        <!-- Scanner Card with Navy Header Bar -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+            <div class="navy-section-header">
+                <i class="fa-solid fa-shield-halved mr-2 text-sm text-slate-300"></i> Authorities QR Scanner
+            </div>
+
+            <div class="p-6 flex flex-col items-center text-center space-y-5">
+                <p class="text-xs font-medium text-slate-600">
+                    Scan the traveller's QR code using your device camera
+                </p>
+
+                <!-- Viewfinder Box (Exact Match to Mockup Screen 4) -->
+                <div class="viewfinder-box relative shadow-inner">
+                    <div id="reader" class="w-full h-full"></div>
+                    <div class="viewfinder-bracket viewfinder-tl"></div>
+                    <div class="viewfinder-bracket viewfinder-tr"></div>
+                    <div class="viewfinder-bracket viewfinder-bl"></div>
+                    <div class="viewfinder-bracket viewfinder-br"></div>
+                    <div class="crosshair"></div>
+                </div>
+
+                <!-- or Separator -->
+                <div class="w-full relative flex py-1 items-center">
+                    <div class="flex-grow border-t border-slate-200"></div>
+                    <span class="flex-shrink mx-3 text-xs text-slate-400 font-medium">or</span>
+                    <div class="flex-grow border-t border-slate-200"></div>
+                </div>
+
+                <!-- Manual Lookup Button -->
+                <a href="index.html" class="w-full py-2.5 px-4 bg-white border border-[#0066cc] text-[#0066cc] hover:bg-blue-50 font-semibold text-xs rounded-md shadow-sm transition flex items-center justify-center">
+                    <i class="fa-solid fa-keyboard mr-2"></i> Enter QR Code Manually
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Mobile Bottom Navigation (Exact Match to Mockup Screen 4) -->
+    <nav class="mobile-bottom-nav">
+        <a href="index.html" class="mobile-nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="scanner.html" class="mobile-nav-item active">
+            <i class="fa-solid fa-file-lines"></i>
+            <span>Records</span>
+        </a>
+        <a href="javascript:void(0)" class="mobile-nav-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <!-- Scripts -->
+    <script src="../assets/js/loader.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 180 });
+                scanner.render((text) => {
+                    window.location.href = "index.html";
+                }, () => {});
+            } catch (e) {
+                console.warn(e);
+            }
+        });
+    </script>
+</body>
+</html>

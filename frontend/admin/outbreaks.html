@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Declare & Manage Outbreaks | OutbreakWatch Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="min-h-screen flex flex-col bg-slate-100">
+    <!-- Navbar -->
+    <header class="bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center text-white font-bold">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <span class="text-lg font-bold tracking-tight">OutbreakWatch <span class="text-red-500 text-sm font-semibold">Admin</span></span>
+                </div>
+            </div>
+            <nav class="flex items-center space-x-4">
+                <a href="index.html" class="text-sm font-medium text-slate-300 hover:text-white">Case Reports</a>
+                <a href="outbreaks.html" class="text-sm font-semibold text-red-400">Manage Outbreaks</a>
+                <a href="../index.html" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Public Site
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+        <div class="mb-8">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Outbreak Surveillance Configuration</h1>
+            <p class="text-sm text-slate-600 mt-1">Declare new disease outbreaks (e.g. Ebola, Cholera, Marburg) and customize clinical symptom questionnaires.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left: Outbreak Creation Form -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sticky top-24">
+                    <div class="flex items-center space-x-2 text-red-600 font-bold mb-4">
+                        <i class="fa-solid fa-virus"></i>
+                        <span>Declare New Outbreak</span>
+                    </div>
+
+                    <form id="outbreak-form" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Outbreak Name *</label>
+                            <input type="text" id="name" required placeholder="e.g. Ebola Outbreak 2026" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Disease Pathogen *</label>
+                            <input type="text" id="disease" required placeholder="e.g. Ebola Virus Disease (Sudan strain)" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Severity</label>
+                                <select id="severity" class="w-full rounded-xl border border-slate-300 p-2 text-sm">
+                                    <option value="critical" selected>Critical</option>
+                                    <option value="high">High</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="low">Low</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Status</label>
+                                <select id="status" class="w-full rounded-xl border border-slate-300 p-2 text-sm">
+                                    <option value="active" selected>Active</option>
+                                    <option value="monitoring">Monitoring</option>
+                                    <option value="contained">Contained</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Epicenter / Region *</label>
+                            <input type="text" id="epicenter_location" required placeholder="e.g. Beni & Butembo Districts" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Country</label>
+                            <input type="text" id="country" placeholder="e.g. Democratic Republic of the Congo" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Symptoms Checklist (1 per line) *</label>
+                            <textarea id="symptoms_checklist" rows="4" required class="w-full rounded-xl border border-slate-300 p-2.5 text-sm font-mono focus:ring-2 focus:ring-red-500" placeholder="Sudden high fever (> 38.5°C)&#10;Unexplained bleeding or bruising&#10;Severe muscle pain and headache&#10;Persistent vomiting & diarrhea"></textarea>
+                            <span class="text-xs text-slate-400">These will appear on public reporting forms.</span>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Guidance Notes for Public</label>
+                            <textarea id="guidance_notes" rows="3" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500" placeholder="Emergency instructions shown to individuals filling report..."></textarea>
+                        </div>
+
+                        <button type="submit" id="save-btn" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-sm shadow-md transition flex items-center justify-center">
+                            <i class="fa-solid fa-plus mr-2"></i> Save Outbreak Record
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right: Existing Outbreaks Directory -->
+            <div class="lg:col-span-2 space-y-4">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                    <h2 class="text-lg font-bold text-slate-900 mb-4">Tracked Outbreaks Directory</h2>
+                    <div id="outbreaks-list" class="space-y-4">
+                        <div class="text-center py-10 text-slate-400">Loading outbreaks...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script>
+        async function loadOutbreaks() {
+            try {
+                const list = await OutbreakAPI.getOutbreaks();
+                const container = document.getElementById('outbreaks-list');
+
+                if (!list || list.length === 0) {
+                    container.innerHTML = `<div class="text-center py-8 text-slate-400">No outbreaks currently declared. Use form on left to create one.</div>`;
+                    return;
+                }
+
+                container.innerHTML = list.map(o => `
+                    <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-slate-900">${o.name}</h3>
+                                ${getSeverityBadge(o.severity)}
+                            </div>
+                            <p class="text-xs text-red-600 font-semibold"><i class="fa-solid fa-virus mr-1"></i> ${o.disease}</p>
+                            <p class="text-xs text-slate-500"><i class="fa-solid fa-location-dot mr-1 text-slate-400"></i> ${o.epicenter_location} ${o.country ? '(' + o.country + ')' : ''}</p>
+                            <div class="text-xs text-slate-500 mt-2">
+                                Symptoms (${(o.symptoms_checklist || []).length}): <span class="font-mono text-slate-700">${(o.symptoms_checklist || []).slice(0, 3).join(', ')}${(o.symptoms_checklist || []).length > 3 ? '...' : ''}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <select onchange="updateOutbreakStatus('${o.id}', this.value)" class="text-xs border rounded-lg px-2.5 py-1.5 bg-white font-medium">
+                                <option value="active" ${o.status === 'active' ? 'selected' : ''}>Active</option>
+                                <option value="monitoring" ${o.status === 'monitoring' ? 'selected' : ''}>Monitoring</option>
+                                <option value="contained" ${o.status === 'contained' ? 'selected' : ''}>Contained</option>
+                                <option value="archived" ${o.status === 'archived' ? 'selected' : ''}>Archived</option>
+                            </select>
+                            <a href="../report.html?outbreak_id=${o.id}" target="_blank" class="text-xs px-3 py-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg text-slate-700 font-medium">
+                                View Form <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error("Failed to load outbreaks:", err);
+                showNotification("Could not connect to backend", "error");
+            }
+        }
+
+        async function updateOutbreakStatus(id, newStatus) {
+            try {
+                await OutbreakAPI.updateOutbreak(id, { status: newStatus });
+                showNotification(`Outbreak status set to ${newStatus}`, "success");
+                loadOutbreaks();
+            } catch (err) {
+                showNotification("Failed to update status", "error");
+            }
+        }
+
+        document.getElementById('outbreak-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('save-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Saving...`;
+
+            try {
+                const symptomsRaw = document.getElementById('symptoms_checklist').value;
+                const checklist = symptomsRaw.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+
+                const payload = {
+                    name: document.getElementById('name').value.trim(),
+                    disease: document.getElementById('disease').value.trim(),
+                    severity: document.getElementById('severity').value,
+                    status: document.getElementById('status').value,
+                    epicenter_location: document.getElementById('epicenter_location').value.trim(),
+                    country: document.getElementById('country').value.trim() || null,
+                    symptoms_checklist: checklist,
+                    guidance_notes: document.getElementById('guidance_notes').value.trim() || null
+                };
+
+                await OutbreakAPI.createOutbreak(payload);
+                showNotification("Outbreak declared and activated!", "success");
+                document.getElementById('outbreak-form').reset();
+                loadOutbreaks();
+            } catch (err) {
+                console.error("Error creating outbreak:", err);
+                showNotification(err.message || "Failed to create outbreak", "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-plus mr-2"></i> Save Outbreak Record`;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', loadOutbreaks);
+    </script>
+</body>
+</html>
+

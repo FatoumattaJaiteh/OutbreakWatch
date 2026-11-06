@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Portal Login | Ministry of Health, The Gambia</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="min-h-screen flex flex-col bg-[#f0f4f9] text-slate-800">
+
+    <!-- ====================================================================== -->
+    <!-- FLIGHT LINE LOADING SCREEN                                             -->
+    <!-- Plane mounted at the moving edge of the loading line                  -->
+    <!-- Secondary Brand Background Color (#0b2545)                             -->
+    <!-- ====================================================================== -->
+    <div id="page-loader" class="fixed inset-0 z-[100] bg-[#0b2545] flex flex-col items-center justify-center p-4 sm:p-6 transition-all duration-700 ease-out text-white">
+        <div class="max-w-xl w-full flex flex-col items-center text-center space-y-8 px-4">
+            
+            <!-- Official Coat of Arms & Government Title (Bold, Bigger, Properly Aligned) -->
+            <div class="flex flex-col items-center space-y-3">
+                <img src="../assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-2xl">
+                <div class="space-y-1">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-wide uppercase text-white drop-shadow-sm">
+                        Ministry of Health
+                    </h1>
+                    <h2 class="text-base sm:text-lg font-bold tracking-widest uppercase text-sky-400">
+                        The Gambia
+                    </h2>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-300 tracking-normal pt-0.5">
+                        Port Health & Surveillance Staff Portal
+                    </p>
+                </div>
+            </div>
+
+            <!-- The Loading Line with Plane Mounted Directly at the Edge -->
+            <div class="w-full max-w-md sm:max-w-lg space-y-3 pt-2">
+                <!-- Track Container -->
+                <div class="w-full bg-slate-900/90 rounded-full h-3 p-0.5 border border-slate-700 shadow-inner relative overflow-visible">
+                    <!-- Progress Line (Expanding 0% to 100%) -->
+                    <div id="loader-line" class="h-full bg-gradient-to-r from-red-600 via-sky-400 to-emerald-400 rounded-full relative transition-[width] duration-75 ease-linear shadow-[0_0_12px_rgba(56,189,248,0.5)]" style="width: 0%;">
+                        <!-- Airplane: Mounted right at the leading edge of the line -->
+                        <div class="absolute -right-5 sm:-right-6 top-1/2 -translate-y-1/2 pointer-events-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] z-10">
+                            <svg width="48" height="28" viewBox="-32 -16 80 32" class="w-10 h-6 sm:w-12 sm:h-7 overflow-visible">
+                                <!-- Fuselage with Gambian Tricolor Livery -->
+                                <path d="M -26,0 C -26,-5 -16,-8 -2,-8 L 24,-8 C 34,-8 40,-4 44,0 C 40,4 34,8 24,8 L -2,8 C -16,8 -26,5 -26,0 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+                                <path d="M 34,-4 C 38,-2 40,-1 41,0 L 36,0 Z" fill="#0b2545"/>
+                                <!-- Gambian Livery Stripes -->
+                                <path d="M -16,-2.5 L 30,-2.5" stroke="#ce1126" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M -16,0 L 32,0" stroke="#0c1c8c" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M -16,2.5 L 28,2.5" stroke="#3a7728" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="-10" y1="-5" x2="22" y2="-5" stroke="#64748b" stroke-width="1.2" stroke-dasharray="2 2"/>
+                                <!-- Wing & Engine -->
+                                <path d="M -2,0 L 14,14 L 7,14 L -8,0 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                                <line x1="7" y1="13" x2="13" y2="13" stroke="#ce1126" stroke-width="1.5"/>
+                                <rect x="2" y="7" width="11" height="5" rx="2.5" fill="#07172c"/>
+                                <ellipse cx="13" cy="9.5" rx="1.5" ry="2.2" fill="#38bdf8"/>
+                                <ellipse cx="0" cy="9.5" rx="3" ry="1.5" fill="rgba(56,189,248,0.85)"/>
+                                <!-- Tail Fin with Gambian Stripes -->
+                                <path d="M -23,-2 L -31,-16 L -20,-16 L -13,-2 Z" fill="#0c1c8c"/>
+                                <path d="M -29,-13 L -21,-13" stroke="#ce1126" stroke-width="2"/>
+                                <path d="M -26,-7 L -17,-7" stroke="#3a7728" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text & Percentage (Properly Aligned, Bold, Bigger) -->
+                <div class="flex items-center justify-between w-full px-1 text-slate-200">
+                    <span id="loader-status" class="text-sm sm:text-base font-bold text-sky-300 tracking-wide">
+                        Authenticating Staff Session...
+                    </span>
+                    <span id="loader-percent" class="text-base sm:text-lg font-black font-mono text-white tracking-wider">
+                        0%
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- TOP NAVIGATION BAR (Lively & Responsive)                               -->
+    <!-- ====================================================================== -->
+    <header class="bg-[#0b2545] text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <!-- Brand Logo with Provided Official Coat of Arms -->
+            <a href="../index.html" class="flex items-center space-x-3 text-white">
+                <img src="../assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-10 h-10 object-contain drop-shadow">
+                <div>
+                    <div class="text-xs sm:text-sm font-bold leading-tight">Ministry of Health</div>
+                    <div class="text-[11px] sm:text-xs text-slate-300 font-medium">The Gambia</div>
+                </div>
+            </a>
+
+            <!-- Center Subtitle (Desktop only) -->
+            <div class="hidden lg:flex flex-col items-center text-center">
+                <span class="text-sm font-bold tracking-tight">Ebola Port Health & Surveillance Portal</span>
+                <span class="text-[11px] text-blue-200 font-medium">Authorized Public Health Operations</span>
+            </div>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold">
+                <a href="../index.html" class="text-slate-200 hover:text-white transition flex items-center">
+                    <i class="fa-solid fa-house mr-1.5 text-blue-400"></i> Home
+                </a>
+                <a href="javascript:void(0)" onclick="openStaffHelpModal()" class="text-slate-200 hover:text-white transition flex items-center">
+                    <i class="fa-solid fa-circle-question mr-1.5 text-amber-400"></i> Help & Guidance
+                </a>
+                <div class="flex items-center text-xs font-semibold text-red-200 bg-red-950/60 border border-red-700/60 rounded-lg px-2.5 py-1">
+                    <i class="fa-solid fa-phone-volume mr-1.5 text-red-400"></i> Hotline: <span class="font-bold text-white ml-1">1025</span>
+                </div>
+            </nav>
+
+            <!-- Mobile Hamburger Toggle Button -->
+            <div class="md:hidden flex items-center">
+                <button type="button" id="mobile-menu-toggle" class="text-white p-2 rounded-lg hover:bg-slate-800 focus:outline-none" aria-label="Toggle navigation menu">
+                    <i class="fa-solid fa-bars text-xl" id="hamburger-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Collapsible Menu Dropdown -->
+        <div id="mobile-menu-dropdown" class="hidden md:hidden bg-[#07172c] border-t border-slate-800 px-4 py-4 space-y-3 text-xs font-medium">
+            <a href="../index.html" class="block text-white hover:text-blue-300 py-1.5 flex items-center">
+                <i class="fa-solid fa-house mr-2 text-blue-400 w-4"></i> OutbreakWatch Home
+            </a>
+            <a href="javascript:void(0)" onclick="openStaffHelpModal(); toggleMobileMenu();" class="block text-slate-200 hover:text-white py-1.5 flex items-center">
+                <i class="fa-solid fa-circle-question mr-2 text-amber-400 w-4"></i> Staff Login Help & Instructions
+            </a>
+            <a href="../traveller/index.html" class="block text-slate-200 hover:text-white py-1.5 flex items-center">
+                <i class="fa-solid fa-clipboard-check mr-2 text-emerald-400 w-4"></i> Public Traveller Declaration
+            </a>
+            <div class="pt-2 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+                <span>MoH Emergency Hotline: <strong class="text-red-400">1025</strong></span>
+                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">Staff Portal</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ====================================================================== -->
+    <!-- MAIN CONTENT AREA                                                      -->
+    <!-- ====================================================================== -->
+    <main class="flex-1 flex items-center justify-center p-4 sm:p-6">
+        <div class="max-w-md w-full bg-white rounded-3xl border border-slate-200 shadow-xl p-6 sm:p-8 space-y-6">
+            
+            <!-- MoH Gambia Logo & Header -->
+            <div class="flex flex-col items-center text-center space-y-2">
+                <div class="w-16 h-16 flex items-center justify-center p-1 bg-white rounded-2xl shadow-sm border border-slate-100">
+                    <img src="../assets/images/gambia-logo.png" alt="MoH Gambia Emblem" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold text-[#0b2545] tracking-tight">Ministry of Health &bull; The Gambia</h1>
+                    <p class="text-xs text-[#0066cc] font-semibold uppercase tracking-wider">Port Health & Surveillance Staff Portal</p>
+                </div>
+                <p class="text-xs text-slate-500 max-w-xs">
+                    Log in with the credentials provided by the Super Administrator to access your assigned operational role.
+                </p>
+            </div>
+
+            <!-- Role Quick-Switcher Pills (For Easy Review & Testing) -->
+            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-center">Select Role to Test:</span>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <button type="button" onclick="selectRolePreset('screening')" class="p-2 rounded-xl border border-slate-200 bg-white hover:bg-blue-50 text-slate-800 font-semibold text-left transition flex items-center space-x-2">
+                        <i class="fa-solid fa-qrcode text-[#0066cc]"></i>
+                        <span class="truncate">Screening Officer</span>
+                    </button>
+                    <button type="button" onclick="selectRolePreset('surveillance')" class="p-2 rounded-xl border border-slate-200 bg-white hover:bg-blue-50 text-slate-800 font-semibold text-left transition flex items-center space-x-2">
+                        <i class="fa-solid fa-virus-covid text-purple-600"></i>
+                        <span class="truncate">Surveillance Officer</span>
+                    </button>
+                    <button type="button" onclick="selectRolePreset('supervisor')" class="p-2 rounded-xl border border-slate-200 bg-white hover:bg-blue-50 text-slate-800 font-semibold text-left transition flex items-center space-x-2">
+                        <i class="fa-solid fa-user-tie text-amber-600"></i>
+                        <span class="truncate">Supervisor</span>
+                    </button>
+                    <button type="button" onclick="selectRolePreset('auditor')" class="p-2 rounded-xl border border-slate-200 bg-white hover:bg-blue-50 text-slate-800 font-semibold text-left transition flex items-center space-x-2">
+                        <i class="fa-solid fa-clipboard-check text-emerald-600"></i>
+                        <span class="truncate">Auditor / DPO</span>
+                    </button>
+                </div>
+                <!-- Role info badge -->
+                <div id="role-info-box" class="text-[11px] text-slate-600 p-2 rounded-lg bg-blue-50/70 border border-blue-100 leading-snug">
+                    <strong>Airport Screening Officer:</strong> Authenticate, scan QR, view permitted screening summary, record screening outcome and refer cases.
+                </div>
+            </div>
+
+            <!-- Alert Error Banner -->
+            <div id="error-alert" class="hidden p-3 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs text-center font-medium"></div>
+
+            <!-- Form -->
+            <form id="staff-login-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Staff Email Address *</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 text-xs">
+                            <i class="fa-solid fa-envelope"></i>
+                        </span>
+                        <input type="email" id="email" required placeholder="screening@health.gov.gm" value="screening@health.gov.gm" class="form-input-styled pl-9 text-xs">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Password *</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 text-xs">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        <input type="password" id="password" required placeholder="••••••••" value="Staff@2026!" class="form-input-styled pl-9 text-xs">
+                    </div>
+                </div>
+
+                <button type="submit" id="login-btn" class="w-full py-3 bg-[#0066cc] hover:bg-[#0052a3] text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center">
+                    <i class="fa-solid fa-right-to-bracket mr-2"></i> Log In to Staff Portal
+                </button>
+            </form>
+
+            <!-- Footer Links (Admin Link Removed) -->
+            <div class="pt-3 border-t border-slate-100 text-center space-y-1.5 text-xs">
+                <div class="text-slate-500">
+                    Are you a traveller? <a href="../traveller/index.html" class="text-[#0066cc] font-semibold hover:underline">Complete Health Declaration &rarr;</a>
+                </div>
+                <div class="text-[11px] text-slate-400">
+                    Ministry of Health &bull; Directorate of Port Health & Surveillance
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ====================================================================== -->
+    <!-- STAFF HELP & GUIDANCE MODAL                                            -->
+    <!-- ====================================================================== -->
+    <div id="help-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center space-x-2 text-[#0b2545]">
+                    <i class="fa-solid fa-shield-virus text-lg text-[#0066cc]"></i>
+                    <h3 class="font-bold text-sm">Staff Authentication Help</h3>
+                </div>
+                <button type="button" onclick="closeStaffHelpModal()" class="text-slate-400 hover:text-slate-600 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="text-xs text-slate-600 space-y-2.5 leading-relaxed">
+                <p>
+                    <strong>Role Credentials:</strong> Only officers provisioned by the Super Administrator can access the operational portal.
+                </p>
+                <div class="p-2.5 rounded-lg bg-blue-50 border border-blue-100 text-slate-700 space-y-1">
+                    <div><strong>Screening Officer:</strong> Scan QR pass, view clearance and triage summary.</div>
+                    <div><strong>Surveillance Officer:</strong> Full exposure timeline, risk reassessments, monitoring actions.</div>
+                    <div><strong>Supervisor:</strong> Protocol reviews, escalations, operational oversight.</div>
+                    <div><strong>Auditor / DPO:</strong> System audit logs and privacy verification.</div>
+                </div>
+                <p>
+                    If you forget your password or need your role permissions updated, contact your station supervisor or the MoH IT Directorate.
+                </p>
+            </div>
+            <div class="pt-2 text-right">
+                <button type="button" onclick="closeStaffHelpModal()" class="px-4 py-2 bg-[#0b2545] text-white rounded-xl text-xs font-semibold hover:bg-slate-800">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        &copy; 2026 Ministry of Health, The Gambia. All rights reserved. OutbreakWatch Surveillance Platform.
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/loader.js"></script>
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('mobile-menu-toggle');
+        const menuDropdown = document.getElementById('mobile-menu-dropdown');
+        const hamburgerIcon = document.getElementById('hamburger-icon');
+
+        function toggleMobileMenu() {
+            if (menuDropdown.classList.contains('hidden')) {
+                menuDropdown.classList.remove('hidden');
+                hamburgerIcon.classList.replace('fa-bars', 'fa-xmark');
+            } else {
+                menuDropdown.classList.add('hidden');
+                hamburgerIcon.classList.replace('fa-xmark', 'fa-bars');
+            }
+        }
+        if (menuToggle) menuToggle.addEventListener('click', toggleMobileMenu);
+
+        // Help modal helpers
+        function openStaffHelpModal() {
+            document.getElementById('help-modal').classList.remove('hidden');
+        }
+        function closeStaffHelpModal() {
+            document.getElementById('help-modal').classList.add('hidden');
+        }
+
+        const PRESETS = {
+            screening: {
+                email: "screening@health.gov.gm",
+                pass: "Staff@2026!",
+                desc: "<strong>Airport Screening Officer:</strong> Authenticate, scan QR, view permitted screening summary, record screening outcome and refer cases."
+            },
+            surveillance: {
+                email: "surveillance@health.gov.gm",
+                pass: "Staff@2026!",
+                desc: "<strong>Surveillance / Public-Health Officer:</strong> Review exposure details, assess risk, record official decisions, assign monitoring and follow-up."
+            },
+            supervisor: {
+                email: "supervisor@health.gov.gm",
+                pass: "Staff@2026!",
+                desc: "<strong>Public-Health Supervisor:</strong> Approve rules, review escalations, monitor workload and operational reports."
+            },
+            auditor: {
+                email: "auditor@health.gov.gm",
+                pass: "Staff@2026!",
+                desc: "<strong>Auditor / Data-Protection Officer:</strong> Review access logs, policy compliance, retention and data handling."
+            }
+        };
+
+        function selectRolePreset(roleKey) {
+            const p = PRESETS[roleKey];
+            if (!p) return;
+            document.getElementById('email').value = p.email;
+            document.getElementById('password').value = p.pass;
+            document.getElementById('role-info-box').innerHTML = p.desc;
+        }
+
+        document.getElementById('staff-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('login-btn');
+            const alertEl = document.getElementById('error-alert');
+            alertEl.classList.add('hidden');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Verifying...`;
+
+            try {
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+
+                await OutbreakAPI.loginStaff(email, password);
+                window.location.href = 'index.html';
+            } catch (err) {
+                alertEl.textContent = err.message || "Invalid staff credentials.";
+                alertEl.classList.remove('hidden');
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-right-to-bracket mr-2"></i> Log In to Staff Portal`;
+            }
+        });
+    </script>
+</body>
+</html>

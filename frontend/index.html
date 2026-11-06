@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OutbreakWatch | Ministry of Health, The Gambia - Ebola Traveller Screening</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="min-h-screen flex flex-col bg-[#f8fafc] text-slate-800 antialiased selection:bg-blue-100 selection:text-blue-900">
+
+    <!-- ====================================================================== -->
+    <!-- FLIGHT LINE LOADING SCREEN                                             -->
+    <!-- Plane mounted at the moving edge of the loading line                  -->
+    <!-- Secondary Brand Background Color (#0b2545)                             -->
+    <!-- ====================================================================== -->
+    <div id="page-loader" class="fixed inset-0 z-[100] bg-[#0b2545] flex flex-col items-center justify-center p-4 sm:p-6 transition-all duration-700 ease-out text-white">
+        <div class="max-w-xl w-full flex flex-col items-center text-center space-y-8 px-4">
+            
+            <!-- Official Coat of Arms & Government Title (Bold, Bigger, Properly Aligned) -->
+            <div class="flex flex-col items-center space-y-3">
+                <img src="./assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-2xl">
+                <div class="space-y-1">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-wide uppercase text-white drop-shadow-sm">
+                        Ministry of Health
+                    </h1>
+                    <h2 class="text-base sm:text-lg font-bold tracking-widest uppercase text-sky-400">
+                        The Gambia
+                    </h2>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-300 tracking-normal pt-0.5">
+                        Port Health & Border Clearance Gateway
+                    </p>
+                </div>
+            </div>
+
+            <!-- The Loading Line with Plane Mounted Directly at the Edge -->
+            <div class="w-full max-w-md sm:max-w-lg space-y-3 pt-2">
+                <!-- Track Container -->
+                <div class="w-full bg-slate-900/90 rounded-full h-3 p-0.5 border border-slate-700 shadow-inner relative overflow-visible">
+                    <!-- Progress Line (Expanding 0% to 100%) -->
+                    <div id="loader-line" class="h-full bg-gradient-to-r from-red-600 via-sky-400 to-emerald-400 rounded-full relative transition-[width] duration-75 ease-linear shadow-[0_0_12px_rgba(56,189,248,0.5)]" style="width: 0%;">
+                        <!-- Airplane: Mounted right at the leading edge of the line -->
+                        <div class="absolute -right-5 sm:-right-6 top-1/2 -translate-y-1/2 pointer-events-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] z-10">
+                            <svg width="48" height="28" viewBox="-32 -16 80 32" class="w-10 h-6 sm:w-12 sm:h-7 overflow-visible">
+                                <!-- Fuselage with Gambian Tricolor Livery -->
+                                <path d="M -26,0 C -26,-5 -16,-8 -2,-8 L 24,-8 C 34,-8 40,-4 44,0 C 40,4 34,8 24,8 L -2,8 C -16,8 -26,5 -26,0 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+                                <path d="M 34,-4 C 38,-2 40,-1 41,0 L 36,0 Z" fill="#0b2545"/>
+                                <!-- Gambian Livery Stripes -->
+                                <path d="M -16,-2.5 L 30,-2.5" stroke="#ce1126" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M -16,0 L 32,0" stroke="#0c1c8c" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M -16,2.5 L 28,2.5" stroke="#3a7728" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="-10" y1="-5" x2="22" y2="-5" stroke="#64748b" stroke-width="1.2" stroke-dasharray="2 2"/>
+                                <!-- Wing & Engine -->
+                                <path d="M -2,0 L 14,14 L 7,14 L -8,0 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                                <line x1="7" y1="13" x2="13" y2="13" stroke="#ce1126" stroke-width="1.5"/>
+                                <rect x="2" y="7" width="11" height="5" rx="2.5" fill="#07172c"/>
+                                <ellipse cx="13" cy="9.5" rx="1.5" ry="2.2" fill="#38bdf8"/>
+                                <ellipse cx="0" cy="9.5" rx="3" ry="1.5" fill="rgba(56,189,248,0.85)"/>
+                                <!-- Tail Fin with Gambian Stripes -->
+                                <path d="M -23,-2 L -31,-16 L -20,-16 L -13,-2 Z" fill="#0c1c8c"/>
+                                <path d="M -29,-13 L -21,-13" stroke="#ce1126" stroke-width="2"/>
+                                <path d="M -26,-7 L -17,-7" stroke="#3a7728" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text & Percentage (Properly Aligned, Bold, Bigger) -->
+                <div class="flex items-center justify-between w-full px-1 text-slate-200">
+                    <span id="loader-status" class="text-sm sm:text-base font-bold text-sky-300 tracking-wide">
+                        Connecting to Clearance Gateway...
+                    </span>
+                    <span id="loader-percent" class="text-base sm:text-lg font-black font-mono text-white tracking-wider">
+                        0%
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- TOP TICKER MARQUEE: IMPORTANT PUBLIC HEALTH DIRECTIVE                  -->
+    <!-- ====================================================================== -->
+    <div class="bg-[#07172c] text-white py-2 px-4 overflow-hidden border-b border-slate-800 text-xs font-medium">
+        <div class="marquee-track flex items-center space-x-12">
+            <span class="flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span><strong>MINISTRY OF HEALTH DIRECTIVE:</strong> Mandatory 21-Day Port Health Screening in effect for all inbound international arrivals at Banjul International Airport (BJL).</span>
+            </span>
+            <span class="flex items-center space-x-2 text-amber-300">
+                <i class="fa-solid fa-phone-volume"></i>
+                <span>National Emergency Surveillance Hotline: <strong>1025 (Toll-Free, 24/7)</strong></span>
+            </span>
+            <span class="flex items-center space-x-2 text-sky-300">
+                <i class="fa-solid fa-qrcode"></i>
+                <span>Complete declaration prior to boarding or upon arrival to receive your digital QR entry pass.</span>
+            </span>
+            <!-- Repeated for seamless loop -->
+            <span class="flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span><strong>MINISTRY OF HEALTH DIRECTIVE:</strong> Mandatory 21-Day Port Health Screening in effect for all inbound international arrivals at Banjul International Airport (BJL).</span>
+            </span>
+            <span class="flex items-center space-x-2 text-amber-300">
+                <i class="fa-solid fa-phone-volume"></i>
+                <span>National Emergency Surveillance Hotline: <strong>1025 (Toll-Free, 24/7)</strong></span>
+            </span>
+        </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- TOP NAVIGATION (Public Portal - No Admin, No QR Scanner)               -->
+    <!-- ====================================================================== -->
+    <header class="bg-[#0b2545] text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+            
+            <!-- Ministry Branding with Official Coat of Arms -->
+            <a href="index.html" class="flex items-center space-x-3.5 py-2">
+                <img src="./assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-11 h-11 object-contain drop-shadow">
+                <div>
+                    <span class="text-sm sm:text-base font-extrabold tracking-tight block leading-tight text-white">Ministry of Health</span>
+                    <span class="text-[11px] sm:text-xs text-blue-200 font-medium block">The Gambia &bull; Port Health Services</span>
+                </div>
+            </a>
+
+            <!-- Desktop Public Navigation Links -->
+            <nav class="hidden lg:flex items-center space-x-6 text-xs font-semibold">
+                <a href="#overview" class="text-slate-200 hover:text-white transition flex items-center">
+                    <i class="fa-solid fa-circle-info mr-1.5 text-blue-400"></i> Requirements
+                </a>
+                <a href="#process" class="text-slate-200 hover:text-white transition flex items-center">
+                    <i class="fa-solid fa-list-check mr-1.5 text-emerald-400"></i> Arrival Steps
+                </a>
+                <a href="#precautions" class="text-slate-200 hover:text-white transition flex items-center">
+                    <i class="fa-solid fa-shield-virus mr-1.5 text-amber-400"></i> Precautions
+                </a>
+                <a href="#symptoms" class="text-slate-200 hover:text-white transition flex items-center">
+                    <i class="fa-solid fa-stethoscope mr-1.5 text-red-400"></i> Symptoms
+                </a>
+                <a href="#faq" class="text-slate-200 hover:text-white transition flex items-center">
+                    <i class="fa-solid fa-circle-question mr-1.5 text-purple-400"></i> FAQ
+                </a>
+            </nav>
+
+            <!-- Right CTAs: Staff Link & Start Declaration Button -->
+            <div class="hidden sm:flex items-center space-x-3">
+                <a href="staff/login.html" class="text-xs text-slate-300 hover:text-white font-medium px-3 py-2 rounded-lg hover:bg-slate-800 transition flex items-center">
+                    <i class="fa-solid fa-user-shield mr-1.5 text-slate-400"></i> Staff Portal
+                </a>
+                <a href="traveller/index.html" class="inline-flex items-center text-xs font-bold text-white bg-[#0066cc] hover:bg-[#0052a3] px-4 py-2.5 rounded-xl shadow-md transition transform active:scale-95">
+                    <i class="fa-solid fa-file-signature mr-2"></i> Fill Declaration Form
+                </a>
+            </div>
+
+            <!-- Mobile Hamburger Toggle Button -->
+            <div class="lg:hidden flex items-center">
+                <button type="button" id="mobile-menu-toggle" class="text-white p-2 rounded-xl hover:bg-slate-800 focus:outline-none" aria-label="Toggle navigation">
+                    <i class="fa-solid fa-bars text-xl" id="hamburger-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Collapsible Menu Dropdown -->
+        <div id="mobile-menu-dropdown" class="hidden lg:hidden bg-[#07172c] border-t border-slate-800 px-5 py-4 space-y-3 text-xs font-medium shadow-2xl">
+            <a href="traveller/index.html" onclick="toggleMobileMenu()" class="block text-white font-bold bg-[#0066cc] py-2.5 px-4 rounded-xl text-center shadow">
+                <i class="fa-solid fa-file-signature mr-2"></i> Start Health Declaration
+            </a>
+            <a href="#overview" onclick="toggleMobileMenu()" class="block text-slate-200 hover:text-white py-1.5 flex items-center">
+                <i class="fa-solid fa-circle-info mr-2 text-blue-400 w-4"></i> Screening Requirements
+            </a>
+            <a href="#process" onclick="toggleMobileMenu()" class="block text-slate-200 hover:text-white py-1.5 flex items-center">
+                <i class="fa-solid fa-list-check mr-2 text-emerald-400 w-4"></i> Airport Arrival Steps
+            </a>
+            <a href="#precautions" onclick="toggleMobileMenu()" class="block text-slate-200 hover:text-white py-1.5 flex items-center">
+                <i class="fa-solid fa-shield-virus mr-2 text-amber-400 w-4"></i> Public Guidelines & Precautions
+            </a>
+            <a href="#symptoms" onclick="toggleMobileMenu()" class="block text-slate-200 hover:text-white py-1.5 flex items-center">
+                <i class="fa-solid fa-stethoscope mr-2 text-red-400 w-4"></i> Clinical Signs & Symptoms
+            </a>
+            <a href="#faq" onclick="toggleMobileMenu()" class="block text-slate-200 hover:text-white py-1.5 flex items-center">
+                <i class="fa-solid fa-circle-question mr-2 text-purple-400 w-4"></i> FAQ & Traveller Help
+            </a>
+            <div class="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+                <a href="staff/login.html" class="text-blue-300 hover:underline">
+                    <i class="fa-solid fa-lock mr-1"></i> Port Health Staff Login
+                </a>
+                <span>Hotline: <strong class="text-red-400">1025</strong></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ====================================================================== -->
+    <!-- HERO SECTION: MODERN, UN-BOXY, WITH REALISTIC SKY & JET BANNER         -->
+    <!-- ====================================================================== -->
+    <section id="overview" class="relative overflow-hidden bg-gradient-to-b from-sky-50/70 via-white to-slate-50 pt-8 pb-16 border-b border-slate-200">
+        
+        <!-- Ambient decorative shapes -->
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute top-1/2 -right-24 w-96 h-96 bg-sky-100/60 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                <!-- Left Column: Inspiring Public Intro -->
+                <div class="lg:col-span-7 space-y-5">
+                    
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-[#0066cc] text-xs font-bold uppercase tracking-wider shadow-xs">
+                        <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+                        Banjul International Airport (BJL) Port Health
+                    </div>
+
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-[#0b2545] tracking-tight leading-tight">
+                        Safe Skies, Healthy Borders for The Gambia
+                    </h1>
+
+                    <p class="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl">
+                        Under public health directives from the Ministry of Health, all international passengers arriving at Banjul International Airport must complete the <strong>21-day Ebola Traveller Health Declaration</strong> to obtain an official verification pass for expedited airport clearance.
+                    </p>
+
+                    <!-- Primary Actions -->
+                    <div class="pt-2 flex flex-col sm:flex-row gap-3 sm:items-center">
+                        <a href="traveller/index.html" class="inline-flex items-center justify-center px-6 py-3.5 rounded-2xl bg-[#0066cc] hover:bg-[#0052a3] text-white font-bold text-sm shadow-lg shadow-blue-500/20 transition transform hover:-translate-y-0.5 active:scale-95">
+                            <i class="fa-solid fa-file-signature mr-2 text-base"></i> Complete Health Declaration Form &rarr;
+                        </a>
+                        <a href="#process" class="inline-flex items-center justify-center px-5 py-3.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm border border-slate-200 shadow-sm transition">
+                            <i class="fa-solid fa-circle-play mr-2 text-slate-400"></i> How Screening Works
+                        </a>
+                    </div>
+
+                    <!-- Highlight Badges -->
+                    <div class="pt-3 grid grid-cols-3 gap-3 max-w-lg">
+                        <div class="flex items-center space-x-2 text-xs font-semibold text-slate-700">
+                            <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-bolt text-xs"></i>
+                            </div>
+                            <span>3-Min Online Form</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-xs font-semibold text-slate-700">
+                            <div class="w-7 h-7 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-shield-check text-xs"></i>
+                            </div>
+                            <span>Private & Encrypted</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-xs font-semibold text-slate-700">
+                            <div class="w-7 h-7 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-qrcode text-xs"></i>
+                            </div>
+                            <span>Instant QR Pass</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Column: Realistic Sky & Gambian-Striped Jet Feature Card -->
+                <div class="lg:col-span-5">
+                    <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-sky-100 group">
+                        
+                        <!-- High Resolution Jet in Sky Image -->
+                        <div class="relative h-72 sm:h-80 w-full overflow-hidden bg-sky-100">
+                            <img src="./assets/images/airplane-sky.jpg" alt="Commercial Passenger Airliner with Gambian Flag Stripe flying in Sky" class="w-full h-full object-cover object-center transform group-hover:scale-105 transition duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0b2545]/80 via-transparent to-transparent"></div>
+                            
+                            <!-- Overlay Badge -->
+                            <div class="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 backdrop-blur-xs text-[#0b2545] text-[11px] font-bold shadow-sm">
+                                <img src="./assets/images/gambia-logo.png" alt="Gambia Emblem" class="w-3.5 h-3.5 object-contain">
+                                <span>MoH Port Health Certified</span>
+                            </div>
+
+                            <!-- Bottom Card Caption -->
+                            <div class="absolute bottom-4 left-4 right-4 text-white">
+                                <div class="text-xs uppercase tracking-wider text-sky-300 font-bold mb-0.5">Banjul International Airport (BJL)</div>
+                                <h3 class="text-base font-bold text-white leading-snug">Rapid Health Declaration & Quarantine Clearance</h3>
+                                <p class="text-[11px] text-slate-200 mt-1">Preserving national health security across all arriving flights.</p>
+                            </div>
+                        </div>
+
+                        <!-- Card Footer Sub-bar -->
+                        <div class="bg-white p-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                            <span class="text-slate-500 font-medium">Have your QR pass ready upon landing</span>
+                            <a href="traveller/index.html" class="text-[#0066cc] font-bold hover:underline flex items-center">
+                                Start Now <i class="fa-solid fa-arrow-right ml-1 text-[10px]"></i>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================================== -->
+    <!-- SECTION 1: IMPORTANT PUBLIC HEALTH ADVISORY                            -->
+    <!-- ====================================================================== -->
+    <section class="py-10 bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-gradient-to-r from-red-50 via-rose-50 to-amber-50 rounded-3xl p-6 sm:p-8 border border-red-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="flex items-start space-x-4">
+                    <div class="w-12 h-12 rounded-2xl bg-red-600 text-white flex items-center justify-center text-xl shrink-0 shadow-md">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2.5 py-0.5 rounded-full bg-red-200 text-red-900 font-extrabold text-[10px] uppercase tracking-wider">Public Health Alert</span>
+                            <span class="text-xs text-slate-500 font-semibold">WHO & MoH Epidemic Surveillance</span>
+                        </div>
+                        <h2 class="text-lg sm:text-xl font-bold text-slate-900">Active Vigilance for Ebola Outbreak Regions</h2>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed max-w-3xl">
+                            All passengers who have traveled through or transited within <strong>Uganda</strong>, the <strong>Democratic Republic of the Congo</strong>, or designated outbreak zones in the past 21 days must declare their full travel and exposure history. Truthful reporting is required by public health law.
+                        </p>
+                    </div>
+                </div>
+                <div class="shrink-0">
+                    <a href="traveller/index.html" class="inline-flex items-center px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow transition">
+                        <i class="fa-solid fa-clipboard-check mr-2"></i> Submit Declaration
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================================== -->
+    <!-- SECTION 2: 4-STEP ARRIVAL WORKFLOW (Un-boxy, Flowing Cards)             -->
+    <!-- ====================================================================== -->
+    <section id="process" class="py-16 bg-[#f8fafc]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+            
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#0066cc] bg-blue-50 px-3 py-1 rounded-full border border-blue-100">Step-by-Step Procedure</span>
+                <h2 class="text-2xl sm:text-3xl font-black text-[#0b2545] tracking-tight">What to Expect at Banjul Airport</h2>
+                <p class="text-xs sm:text-sm text-slate-500">
+                    Your arrival clearance follows a quick, structured 4-step public health protocol designed for your safety and comfort.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Step 1 -->
+                <div class="glow-card bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#0066cc] border border-blue-100 flex items-center justify-center font-black text-lg">
+                            1
+                        </div>
+                        <h3 class="font-bold text-base text-slate-900">Fill Online Declaration</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Provide your personal details, 21-day flight itinerary, contact history, and any current health symptoms before arrival.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 text-[11px] font-bold text-[#0066cc]">
+                        Takes ~3 Minutes
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="glow-card bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center font-black text-lg">
+                            2
+                        </div>
+                        <h3 class="font-bold text-base text-slate-900">Save Your QR Pass</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            The system instantly issues your secure verification QR pass. Save it to your phone's photo library or take a screenshot.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 text-[11px] font-bold text-emerald-600">
+                        Instant Generation
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="glow-card bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center font-black text-lg">
+                            3
+                        </div>
+                        <h3 class="font-bold text-base text-slate-900">Airport QR Scan</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Upon landing at Banjul (BJL), present your QR code to Port Health officers alongside standard non-contact temperature check.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 text-[11px] font-bold text-amber-600">
+                        Zero Queuing Delay
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="glow-card bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center font-black text-lg">
+                            4
+                        </div>
+                        <h3 class="font-bold text-base text-slate-900">Clearance or Care</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Passengers with no exposure proceed directly to immigration. Anyone requiring assistance receives immediate clinical support.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 text-[11px] font-bold text-purple-600">
+                        Welcome to The Gambia
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ====================================================================== -->
+    <!-- SECTION 3: EBOLA PRECAUTIONS & HEALTH GUIDELINES                       -->
+    <!-- ====================================================================== -->
+    <section id="precautions" class="py-16 bg-white border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+            
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">Public Health Guidelines</span>
+                <h2 class="text-2xl sm:text-3xl font-black text-[#0b2545] tracking-tight">Essential Precautions & Prevention</h2>
+                <p class="text-xs sm:text-sm text-slate-500">
+                    Follow these approved health precautions to safeguard yourself, your loved ones, and the community during international travel.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200/80 space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-[#0066cc] flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-hands-bubbles"></i>
+                    </div>
+                    <h3 class="font-bold text-sm text-slate-900">Strict Hand Hygiene</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Frequently wash your hands with clean water and soap, or use an alcohol-based hand sanitizer (at least 60% alcohol).
+                    </p>
+                </div>
+
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200/80 space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-person-circle-exclamation"></i>
+                    </div>
+                    <h3 class="font-bold text-sm text-slate-900">Avoid Bodily Fluids</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Do not touch blood, vomit, sweat, saliva, or any bodily fluids of persons who appear unwell or suspected of infection.
+                    </p>
+                </div>
+
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200/80 space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-paw"></i>
+                    </div>
+                    <h3 class="font-bold text-sm text-slate-900">Avoid Wild Animals</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Do not handle fruit bats, monkeys, or apes in affected areas. Never handle or consume raw or inadequately cooked bushmeat.
+                    </p>
+                </div>
+
+                <div class="p-6 rounded-3xl bg-slate-50 border border-slate-200/80 space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
+                    <h3 class="font-bold text-sm text-slate-900">Prompt Illness Reporting</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        If you develop a fever or feel sick within 21 days of travel, self-isolate immediately and call <strong>1025</strong> for confidential guidance.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ====================================================================== -->
+    <!-- SECTION 4: CLINICAL SIGNS & SYMPTOMS AWARENESS                        -->
+    <!-- ====================================================================== -->
+    <section id="symptoms" class="py-16 bg-[#f8fafc] border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+            
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-red-600 bg-red-50 px-3 py-1 rounded-full border border-red-100">Symptom Recognition</span>
+                <h2 class="text-2xl sm:text-3xl font-black text-[#0b2545] tracking-tight">Ebola Signs & Symptoms to Watch For</h2>
+                <p class="text-xs sm:text-sm text-slate-500">
+                    The incubation period ranges from 2 to 21 days. Persons become contagious only once symptoms develop.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 text-center space-y-2 shadow-xs">
+                    <div class="w-10 h-10 mx-auto rounded-xl bg-red-50 text-red-600 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-temperature-arrow-up"></i>
+                    </div>
+                    <div class="font-bold text-xs text-slate-900">Sudden High Fever</div>
+                    <div class="text-[11px] text-slate-500">&gt; 38.0&deg;C (100.4&deg;F)</div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 text-center space-y-2 shadow-xs">
+                    <div class="w-10 h-10 mx-auto rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-droplet"></i>
+                    </div>
+                    <div class="font-bold text-xs text-slate-900">Unexplained Bleeding</div>
+                    <div class="text-[11px] text-slate-500">Bruising or hemorrhage</div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 text-center space-y-2 shadow-xs">
+                    <div class="w-10 h-10 mx-auto rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-head-side-virus"></i>
+                    </div>
+                    <div class="font-bold text-xs text-slate-900">Severe Headache</div>
+                    <div class="text-[11px] text-slate-500">Persistent acute pain</div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 text-center space-y-2 shadow-xs">
+                    <div class="w-10 h-10 mx-auto rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-bone"></i>
+                    </div>
+                    <div class="font-bold text-xs text-slate-900">Muscle & Joint Pain</div>
+                    <div class="text-[11px] text-slate-500">Generalised aches</div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 text-center space-y-2 shadow-xs">
+                    <div class="w-10 h-10 mx-auto rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-bed"></i>
+                    </div>
+                    <div class="font-bold text-xs text-slate-900">Intense Weakness</div>
+                    <div class="text-[11px] text-slate-500">Profound exhaustion</div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 text-center space-y-2 shadow-xs">
+                    <div class="w-10 h-10 mx-auto rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-virus"></i>
+                    </div>
+                    <div class="font-bold text-xs text-slate-900">Gastrointestinal</div>
+                    <div class="text-[11px] text-slate-500">Vomiting or diarrhea</div>
+                </div>
+
+            </div>
+
+            <!-- Warning Notice Card -->
+            <div class="p-5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-center space-x-3">
+                <i class="fa-solid fa-circle-exclamation text-amber-600 text-lg shrink-0"></i>
+                <div>
+                    <strong>Travel Health Advisory:</strong> If you experience any of these symptoms while abroad or prior to departure, <strong>do not board public transportation or aircraft</strong>. Seek medical evaluation immediately and inform healthcare staff of your travel history.
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ====================================================================== -->
+    <!-- SECTION 5: FREQUENTLY ASKED QUESTIONS (Accordion)                      -->
+    <!-- ====================================================================== -->
+    <section id="faq" class="py-16 bg-white border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+            
+            <div class="text-center space-y-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#0066cc] bg-blue-50 px-3 py-1 rounded-full border border-blue-100">Traveller Assistance</span>
+                <h2 class="text-2xl sm:text-3xl font-black text-[#0b2545] tracking-tight">Frequently Asked Questions</h2>
+                <p class="text-xs sm:text-sm text-slate-500">Quick answers to common questions about the screening system.</p>
+            </div>
+
+            <div class="space-y-4">
+                
+                <details class="group bg-slate-50 rounded-2xl border border-slate-200 p-5 transition open:bg-white open:shadow-md">
+                    <summary class="font-bold text-sm text-slate-900 cursor-pointer flex items-center justify-between list-none">
+                        <span>Who is required to fill out this declaration?</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-400 group-open:rotate-180 transition"></i>
+                    </summary>
+                    <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+                        All arriving passengers disembarking at Banjul International Airport (BJL)—including Gambian citizens, residents, and visitors of all nationalities—are legally required to complete the health declaration for each journey.
+                    </p>
+                </details>
+
+                <details class="group bg-slate-50 rounded-2xl border border-slate-200 p-5 transition open:bg-white open:shadow-md">
+                    <summary class="font-bold text-sm text-slate-900 cursor-pointer flex items-center justify-between list-none">
+                        <span>When should I complete the form?</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-400 group-open:rotate-180 transition"></i>
+                    </summary>
+                    <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+                        You can fill out the form up to 72 hours before your flight or on your smartphone upon arrival at the airport terminal. We recommend completing it prior to boarding for fastest clearance.
+                    </p>
+                </details>
+
+                <details class="group bg-slate-50 rounded-2xl border border-slate-200 p-5 transition open:bg-white open:shadow-md">
+                    <summary class="font-bold text-sm text-slate-900 cursor-pointer flex items-center justify-between list-none">
+                        <span>Does the QR code contain my personal medical information?</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-400 group-open:rotate-180 transition"></i>
+                    </summary>
+                    <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+                        No. The QR pass contains an opaque, cryptographically salted token hash. It embeds zero readable personally identifiable information (PII). Only authorized health officers using authenticated Ministry terminals can look up your screening status.
+                    </p>
+                </details>
+
+                <details class="group bg-slate-50 rounded-2xl border border-slate-200 p-5 transition open:bg-white open:shadow-md">
+                    <summary class="font-bold text-sm text-slate-900 cursor-pointer flex items-center justify-between list-none">
+                        <span>What if I do not have a smartphone or data connection?</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-400 group-open:rotate-180 transition"></i>
+                    </summary>
+                    <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+                        You can print your QR code confirmation page before departure. If you cannot access the form digitally, Port Health screening desks at Banjul Airport provide assisted entry desks with free terminal tablets.
+                    </p>
+                </details>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ====================================================================== -->
+    <!-- SECTION 6: EMERGENCY HELPLINE & SUPPORT CARD                           -->
+    <!-- ====================================================================== -->
+    <section class="py-12 bg-gradient-to-br from-[#0b2545] to-[#07172c] text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+                <div class="space-y-2">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-600/30 border border-red-500/40 text-red-300 text-xs font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-phone-volume"></i> 24/7 Rapid Response Center
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Need Public Health Assistance?</h2>
+                    <p class="text-xs sm:text-sm text-slate-300 max-w-xl">
+                        The National Public Health Emergency Operations Center (PHEOC) is on standby 24 hours a day to assist incoming travellers, airlines, and healthcare providers.
+                    </p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3 shrink-0">
+                    <a href="tel:1025" class="inline-flex items-center justify-center px-6 py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm shadow-lg transition">
+                        <i class="fa-solid fa-phone mr-2"></i> Call Toll-Free: 1025
+                    </a>
+                    <a href="traveller/index.html" class="inline-flex items-center justify-center px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm border border-white/20 transition">
+                        <i class="fa-solid fa-file-signature mr-2"></i> Complete Form
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================================== -->
+    <!-- FOOTER                                                                 -->
+    <!-- ====================================================================== -->
+    <footer class="bg-[#050f1c] border-t border-slate-800 py-10 text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center space-x-3">
+                    <img src="./assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-10 h-10 object-contain">
+                    <div>
+                        <div class="font-bold text-white text-sm">Ministry of Health &bull; The Gambia</div>
+                        <div class="text-[11px] text-slate-500">Directorate of Port Health & Disease Surveillance</div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center justify-center gap-6 text-slate-400 font-medium">
+                    <a href="traveller/index.html" class="hover:text-white transition">Declaration Form</a>
+                    <a href="#precautions" class="hover:text-white transition">Health Guidelines</a>
+                    <a href="#symptoms" class="hover:text-white transition">Symptoms</a>
+                    <a href="#faq" class="hover:text-white transition">FAQ</a>
+                    <a href="staff/login.html" class="hover:text-blue-300 transition flex items-center">
+                        <i class="fa-solid fa-lock mr-1.5 text-slate-500"></i> Authorized Staff Portal
+                    </a>
+                </div>
+            </div>
+            <div class="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px] text-slate-500">
+                <div>&copy; 2026 Ministry of Health, Republic of The Gambia. All rights reserved.</div>
+                <div>Banjul International Airport (BJL) Port Health Infrastructure</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="./assets/js/loader.js"></script>
+    <script>
+        // Mobile Navigation Toggle
+        const menuToggle = document.getElementById('mobile-menu-toggle');
+        const menuDropdown = document.getElementById('mobile-menu-dropdown');
+        const hamburgerIcon = document.getElementById('hamburger-icon');
+
+        function toggleMobileMenu() {
+            if (menuDropdown.classList.contains('hidden')) {
+                menuDropdown.classList.remove('hidden');
+                hamburgerIcon.classList.replace('fa-bars', 'fa-xmark');
+            } else {
+                menuDropdown.classList.add('hidden');
+                hamburgerIcon.classList.replace('fa-xmark', 'fa-bars');
+            }
+        }
+        if (menuToggle) menuToggle.addEventListener('click', toggleMobileMenu);
+    </script>
+</body>
+</html>

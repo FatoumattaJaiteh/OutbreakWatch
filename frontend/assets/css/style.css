@@ -1,0 +1,242 @@
+/* Ebola Traveller Screening System - MoH The Gambia
+ * Custom Design System matching exact Mobile & Desktop Mockups
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+    --navy-header: #0b2545;
+    --navy-dark: #07172c;
+    --navy-card-bar: #0c2340;
+    --navy-sidebar: #091e36;
+    --brand-blue: #0066cc;
+    --brand-blue-hover: #0052a3;
+    --bg-light: #f4f7fb;
+    --card-border: #e2e8f0;
+    --success-green: #16a34a;
+    --success-bg: #dcfce7;
+    --warning-orange: #f59e0b;
+    --warning-bg: #fef3c7;
+    --danger-red: #ef4444;
+    --danger-bg: #fee2e2;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-light);
+    color: #1e293b;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Gambia Emblem Styling */
+.gambia-emblem {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Header Banner Bar */
+.navy-section-header {
+    background-color: var(--navy-card-bar);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+/* Tag Chips */
+.country-chip {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e0edfd;
+    color: #0066cc;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.25rem 0.6rem;
+    border-radius: 0.375rem;
+    margin-right: 0.35rem;
+}
+
+.country-chip .remove-chip {
+    margin-left: 0.35rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #0066cc;
+    line-height: 1;
+}
+
+.country-chip .remove-chip:hover {
+    color: #ef4444;
+}
+
+/* Camera Scanner Viewfinder */
+.viewfinder-box {
+    position: relative;
+    width: 240px;
+    height: 240px;
+    margin: 0 auto;
+    border-radius: 1.25rem;
+    background: #0f172a;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.viewfinder-bracket {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-color: #2563eb;
+    border-style: solid;
+    pointer-events: none;
+}
+
+.viewfinder-tl { top: 16px; left: 16px; border-width: 4px 0 0 4px; border-top-left-radius: 8px; }
+.viewfinder-tr { top: 16px; right: 16px; border-width: 4px 4px 0 0; border-top-right-radius: 8px; }
+.viewfinder-bl { bottom: 16px; left: 16px; border-width: 0 0 4px 4px; border-bottom-left-radius: 8px; }
+.viewfinder-br { bottom: 16px; right: 16px; border-width: 0 4px 4px 0; border-bottom-right-radius: 8px; }
+
+.crosshair {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    opacity: 0.8;
+}
+.crosshair::before, .crosshair::after {
+    content: '';
+    position: absolute;
+    background-color: #3b82f6;
+}
+.crosshair::before { top: 11px; left: 0; width: 24px; height: 2px; }
+.crosshair::after { top: 0; left: 11px; width: 2px; height: 24px; }
+
+/* Custom Form Controls */
+.form-input-styled {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.375rem;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.875rem;
+    color: #1e293b;
+    background-color: #ffffff;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-input-styled:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+}
+
+/* Stepper dots */
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.step-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.step-circle.active {
+    background-color: #0066cc;
+    color: #ffffff;
+}
+
+.step-circle.inactive {
+    background-color: #e2e8f0;
+    color: #64748b;
+}
+
+/* Mobile Bottom Navigation Bar */
+.mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background-color: #0b2545;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 50;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-decoration: none;
+}
+
+.mobile-nav-item.active {
+    color: #ffffff;
+}
+
+.mobile-nav-item i {
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+}
+
+/* Public Portal Smooth Scrolling & Marquee */
+html {
+    scroll-behavior: smooth;
+}
+
+@keyframes marquee-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee-scroll 28s linear infinite;
+}
+
+.marquee-track:hover {
+    animation-play-state: paused;
+}
+
+.glow-card {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glow-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 102, 204, 0.08), 0 10px 10px -5px rgba(0, 102, 204, 0.04);
+}
+
+/* ========================================================================== */
+/* FLIGHT LINE LOADING ANIMATION                                               */
+/* ========================================================================== */
+
+#page-loader {
+    will-change: opacity, transform;
+}
+
+#loader-line {
+    will-change: width;
+}

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission Successful | Ebola Traveller Screening System</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="min-h-screen flex flex-col bg-[#f0f4f9] text-slate-800">
+
+    <!-- ====================================================================== -->
+    <!-- FLIGHT LINE LOADING SCREEN                                             -->
+    <!-- Plane mounted at the moving edge of the loading line                  -->
+    <!-- Secondary Brand Background Color (#0b2545)                             -->
+    <!-- ====================================================================== -->
+    <div id="page-loader" class="fixed inset-0 z-[100] bg-[#0b2545] flex flex-col items-center justify-center p-4 sm:p-6 transition-all duration-700 ease-out text-white">
+        <div class="max-w-xl w-full flex flex-col items-center text-center space-y-8 px-4">
+            
+            <!-- Official Coat of Arms & Government Title (Bold, Bigger, Properly Aligned) -->
+            <div class="flex flex-col items-center space-y-3">
+                <img src="../assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-2xl">
+                <div class="space-y-1">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-wide uppercase text-white drop-shadow-sm">
+                        Ministry of Health
+                    </h1>
+                    <h2 class="text-base sm:text-lg font-bold tracking-widest uppercase text-sky-400">
+                        The Gambia
+                    </h2>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-300 tracking-normal pt-0.5">
+                        Border Clearance Pass & QR Verification
+                    </p>
+                </div>
+            </div>
+
+            <!-- The Loading Line with Plane Mounted Directly at the Edge -->
+            <div class="w-full max-w-md sm:max-w-lg space-y-3 pt-2">
+                <!-- Track Container -->
+                <div class="w-full bg-slate-900/90 rounded-full h-3 p-0.5 border border-slate-700 shadow-inner relative overflow-visible">
+                    <!-- Progress Line (Expanding 0% to 100%) -->
+                    <div id="loader-line" class="h-full bg-gradient-to-r from-red-600 via-sky-400 to-emerald-400 rounded-full relative transition-[width] duration-75 ease-linear shadow-[0_0_12px_rgba(56,189,248,0.5)]" style="width: 0%;">
+                        <!-- Airplane: Mounted right at the leading edge of the line -->
+                        <div class="absolute -right-5 sm:-right-6 top-1/2 -translate-y-1/2 pointer-events-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] z-10">
+                            <svg width="48" height="28" viewBox="-32 -16 80 32" class="w-10 h-6 sm:w-12 sm:h-7 overflow-visible">
+                                <!-- Fuselage with Gambian Tricolor Livery -->
+                                <path d="M -26,0 C -26,-5 -16,-8 -2,-8 L 24,-8 C 34,-8 40,-4 44,0 C 40,4 34,8 24,8 L -2,8 C -16,8 -26,5 -26,0 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+                                <path d="M 34,-4 C 38,-2 40,-1 41,0 L 36,0 Z" fill="#0b2545"/>
+                                <!-- Gambian Livery Stripes -->
+                                <path d="M -16,-2.5 L 30,-2.5" stroke="#ce1126" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M -16,0 L 32,0" stroke="#0c1c8c" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M -16,2.5 L 28,2.5" stroke="#3a7728" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="-10" y1="-5" x2="22" y2="-5" stroke="#64748b" stroke-width="1.2" stroke-dasharray="2 2"/>
+                                <!-- Wing & Engine -->
+                                <path d="M -2,0 L 14,14 L 7,14 L -8,0 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                                <line x1="7" y1="13" x2="13" y2="13" stroke="#ce1126" stroke-width="1.5"/>
+                                <rect x="2" y="7" width="11" height="5" rx="2.5" fill="#07172c"/>
+                                <ellipse cx="13" cy="9.5" rx="1.5" ry="2.2" fill="#38bdf8"/>
+                                <ellipse cx="0" cy="9.5" rx="3" ry="1.5" fill="rgba(56,189,248,0.85)"/>
+                                <!-- Tail Fin with Gambian Stripes -->
+                                <path d="M -23,-2 L -31,-16 L -20,-16 L -13,-2 Z" fill="#0c1c8c"/>
+                                <path d="M -29,-13 L -21,-13" stroke="#ce1126" stroke-width="2"/>
+                                <path d="M -26,-7 L -17,-7" stroke="#3a7728" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text & Percentage (Properly Aligned, Bold, Bigger) -->
+                <div class="flex items-center justify-between w-full px-1 text-slate-200">
+                    <span id="loader-status" class="text-sm sm:text-base font-bold text-sky-300 tracking-wide">
+                        Connecting to Clearance Gateway...
+                    </span>
+                    <span id="loader-percent" class="text-base sm:text-lg font-black font-mono text-white tracking-wider">
+                        0%
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- TOP NAVIGATION (Exact Match to Mockup)                                  -->
+    <!-- ====================================================================== -->
+    <header class="bg-[#0b2545] text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-3 text-white">
+                <!-- Gambia Emblem Icon -->
+                <img src="../assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-10 h-10 object-contain drop-shadow">
+                <div>
+                    <div class="text-xs sm:text-sm font-bold leading-tight">Ministry of Health</div>
+                    <div class="text-[11px] sm:text-xs text-slate-300 font-medium">The Gambia</div>
+                </div>
+            </a>
+
+            <!-- Title (Desktop) -->
+            <div class="hidden sm:block text-sm font-bold text-white">
+                Ebola Traveller Screening System
+            </div>
+
+            <!-- Home Link -->
+            <div class="flex items-center space-x-3">
+                <a href="../index.html" class="text-xs text-slate-200 hover:text-white flex items-center bg-slate-800/80 px-3 py-1.5 rounded-md border border-slate-700">
+                    <i class="fa-solid fa-house mr-1.5"></i> Home
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ====================================================================== -->
+    <!-- MAIN CONTAINER                                                         -->
+    <!-- ====================================================================== -->
+    <main class="max-w-3xl mx-auto px-4 py-8 sm:py-12 flex-1 w-full flex flex-col items-center">
+
+        <!-- Big Green Success Icon -->
+        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#16a34a] text-white flex items-center justify-center text-3xl sm:text-4xl shadow-md mb-4">
+            <i class="fa-solid fa-check"></i>
+        </div>
+
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-[#16a34a] tracking-tight text-center">
+            Submission Successful!
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-600 text-center max-w-md mt-2">
+            Your health declaration has been recorded. Please save your QR code for verification at the airport.
+        </p>
+
+        <!-- Pass Card Container -->
+        <div class="w-full bg-white rounded-2xl border border-slate-200 shadow-md p-6 sm:p-8 mt-6">
+            
+            <!-- Desktop Two-Column / Mobile Stacked -->
+            <div class="flex flex-col md:flex-row items-center justify-center gap-8">
+                
+                <!-- Left Column: Large QR Code Box -->
+                <div class="flex flex-col items-center">
+                    <div class="p-3 bg-white rounded-xl border border-slate-200 shadow-inner inline-block">
+                        <img id="qr-image" src="" alt="Screening QR Code" class="w-52 h-52 sm:w-60 sm:h-60 object-contain">
+                    </div>
+
+                    <!-- Passenger details under QR (Mobile view style) -->
+                    <div class="text-center mt-3">
+                        <h2 id="disp-name" class="text-base sm:text-lg font-bold text-slate-900">Fatoumatta Jaiteh</h2>
+                        <p class="text-xs text-slate-500 font-mono mt-0.5">
+                            QR Code ID: <span id="disp-ref" class="font-bold text-slate-700">ETS-20251005-7843</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right Column: Traveller Information Card (Desktop Mockup Style) -->
+                <div class="w-full md:w-72 bg-[#eef4fc] rounded-xl border border-[#d6e4f7] p-5 space-y-4 text-xs sm:text-sm">
+                    <h3 class="font-bold text-[#0b2545] text-sm flex items-center pb-2 border-b border-[#d6e4f7]">
+                        <i class="fa-solid fa-user mr-2 text-slate-500"></i> Traveller Information
+                    </h3>
+
+                    <div class="space-y-3">
+                        <div>
+                            <span class="text-slate-500 block text-xs">Name:</span>
+                            <strong id="card-name" class="text-slate-900 text-sm">Fatoumatta Jaiteh</strong>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block text-xs">Flight:</span>
+                            <strong id="card-flight" class="text-slate-900 text-sm">QR742</strong>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block text-xs">Risk Assessment:</span>
+                            <span id="card-risk" class="inline-block mt-0.5 font-bold text-[#16a34a]">No Identified Exposure</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Action Buttons (Exact Match to Mockup) -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
+                <button onclick="downloadQRImage()" class="w-full sm:w-auto px-6 py-2.5 bg-[#0066cc] hover:bg-[#0052a3] text-white font-semibold text-xs sm:text-sm rounded-md shadow-sm transition flex items-center justify-center">
+                    <i class="fa-solid fa-download mr-2"></i> Save to Photos
+                </button>
+                <button onclick="window.print()" class="w-full sm:w-auto px-6 py-2.5 bg-white border border-[#0066cc] text-[#0066cc] hover:bg-blue-50 font-semibold text-xs sm:text-sm rounded-md transition flex items-center justify-center">
+                    <i class="fa-solid fa-camera mr-2"></i> Screenshot
+                </button>
+            </div>
+
+            <!-- Green Info Alert Bar (Exact Match to Mockup) -->
+            <div class="mt-6 p-3 rounded-lg bg-[#eaf7ee] border border-[#c7ecd2] flex items-center justify-center text-center text-xs text-[#1e6b36] font-medium">
+                <i class="fa-solid fa-circle-info mr-2 text-sm text-[#22c55e]"></i>
+                Present this QR code to airport authorities upon arrival.
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto text-xs text-slate-500 text-center">
+        <div>&copy; 2025 Ministry of Health, The Gambia. All rights reserved.</div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../assets/js/loader.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const stored = sessionStorage.getItem('screening_confirmation');
+            if (stored) {
+                const data = JSON.parse(stored);
+                document.getElementById('disp-name').textContent = data.traveller_name;
+                document.getElementById('card-name').textContent = data.traveller_name;
+                document.getElementById('disp-ref').textContent = data.reference_code;
+                document.getElementById('card-flight').textContent = data.flight_number;
+                
+                const cat = data.preliminary_risk_category;
+                const riskEl = document.getElementById('card-risk');
+                if (cat === 'HIGH') {
+                    riskEl.textContent = 'High Risk Exposure';
+                    riskEl.className = 'inline-block mt-0.5 font-bold text-red-600';
+                } else if (cat === 'MODERATE') {
+                    riskEl.textContent = 'Moderate Risk Exposure';
+                    riskEl.className = 'inline-block mt-0.5 font-bold text-amber-600';
+                } else {
+                    riskEl.textContent = 'No Identified Exposure';
+                    riskEl.className = 'inline-block mt-0.5 font-bold text-[#16a34a]';
+                }
+
+                document.getElementById('qr-image').src = data.qr_code_base64;
+            } else {
+                // Default fallback to mockup state
+                document.getElementById('qr-image').src = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=ETS-20251005-7843";
+            }
+        });
+
+        function downloadQRImage() {
+            const qrImg = document.getElementById('qr-image');
+            const link = document.createElement('a');
+            link.href = qrImg.src;
+            const ref = document.getElementById('disp-ref').textContent.trim();
+            link.download = `Ebola_Pass_${ref}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

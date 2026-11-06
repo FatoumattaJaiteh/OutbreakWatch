@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Login | Ministry of Health, The Gambia</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="min-h-screen flex flex-col bg-[#07172c] text-slate-100">
+
+    <!-- ====================================================================== -->
+    <!-- FLIGHT LINE LOADING SCREEN                                             -->
+    <!-- Plane mounted at the moving edge of the loading line                  -->
+    <!-- Secondary Brand Background Color (#0b2545)                             -->
+    <!-- ====================================================================== -->
+    <div id="page-loader" class="fixed inset-0 z-[100] bg-[#0b2545] flex flex-col items-center justify-center p-4 sm:p-6 transition-all duration-700 ease-out text-white">
+        <div class="max-w-xl w-full flex flex-col items-center text-center space-y-8 px-4">
+            
+            <!-- Official Coat of Arms & Government Title (Bold, Bigger, Properly Aligned) -->
+            <div class="flex flex-col items-center space-y-3">
+                <img src="../assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-2xl">
+                <div class="space-y-1">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-wide uppercase text-white drop-shadow-sm">
+                        Ministry of Health
+                    </h1>
+                    <h2 class="text-base sm:text-lg font-bold tracking-widest uppercase text-sky-400">
+                        The Gambia
+                    </h2>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-300 tracking-normal pt-0.5">
+                        Super Administrator Command Gateway
+                    </p>
+                </div>
+            </div>
+
+            <!-- The Loading Line with Plane Mounted Directly at the Edge -->
+            <div class="w-full max-w-md sm:max-w-lg space-y-3 pt-2">
+                <!-- Track Container -->
+                <div class="w-full bg-slate-900/90 rounded-full h-3 p-0.5 border border-slate-700 shadow-inner relative overflow-visible">
+                    <!-- Progress Line (Expanding 0% to 100%) -->
+                    <div id="loader-line" class="h-full bg-gradient-to-r from-red-600 via-sky-400 to-emerald-400 rounded-full relative transition-[width] duration-75 ease-linear shadow-[0_0_12px_rgba(56,189,248,0.5)]" style="width: 0%;">
+                        <!-- Airplane: Mounted right at the leading edge of the line -->
+                        <div class="absolute -right-5 sm:-right-6 top-1/2 -translate-y-1/2 pointer-events-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] z-10">
+                            <svg width="48" height="28" viewBox="-32 -16 80 32" class="w-10 h-6 sm:w-12 sm:h-7 overflow-visible">
+                                <!-- Fuselage with Gambian Tricolor Livery -->
+                                <path d="M -26,0 C -26,-5 -16,-8 -2,-8 L 24,-8 C 34,-8 40,-4 44,0 C 40,4 34,8 24,8 L -2,8 C -16,8 -26,5 -26,0 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+                                <path d="M 34,-4 C 38,-2 40,-1 41,0 L 36,0 Z" fill="#0b2545"/>
+                                <!-- Gambian Livery Stripes -->
+                                <path d="M -16,-2.5 L 30,-2.5" stroke="#ce1126" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M -16,0 L 32,0" stroke="#0c1c8c" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M -16,2.5 L 28,2.5" stroke="#3a7728" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="-10" y1="-5" x2="22" y2="-5" stroke="#64748b" stroke-width="1.2" stroke-dasharray="2 2"/>
+                                <!-- Wing & Engine -->
+                                <path d="M -2,0 L 14,14 L 7,14 L -8,0 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                                <line x1="7" y1="13" x2="13" y2="13" stroke="#ce1126" stroke-width="1.5"/>
+                                <rect x="2" y="7" width="11" height="5" rx="2.5" fill="#07172c"/>
+                                <ellipse cx="13" cy="9.5" rx="1.5" ry="2.2" fill="#38bdf8"/>
+                                <ellipse cx="0" cy="9.5" rx="3" ry="1.5" fill="rgba(56,189,248,0.85)"/>
+                                <!-- Tail Fin with Gambian Stripes -->
+                                <path d="M -23,-2 L -31,-16 L -20,-16 L -13,-2 Z" fill="#0c1c8c"/>
+                                <path d="M -29,-13 L -21,-13" stroke="#ce1126" stroke-width="2"/>
+                                <path d="M -26,-7 L -17,-7" stroke="#3a7728" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text & Percentage (Properly Aligned, Bold, Bigger) -->
+                <div class="flex items-center justify-between w-full px-1 text-slate-200">
+                    <span id="loader-status" class="text-sm sm:text-base font-bold text-sky-300 tracking-wide">
+                        Initializing Administrator Console...
+                    </span>
+                    <span id="loader-percent" class="text-base sm:text-lg font-black font-mono text-white tracking-wider">
+                        0%
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- TOP NAVIGATION BAR (Lively & Secure)                                   -->
+    <!-- ====================================================================== -->
+    <header class="bg-[#0b2545] text-white border-b border-slate-800 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <!-- Brand Logo with Provided Official Coat of Arms -->
+            <a href="../index.html" class="flex items-center space-x-3 text-white">
+                <img src="../assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-10 h-10 object-contain drop-shadow">
+                <div>
+                    <div class="text-xs sm:text-sm font-bold leading-tight">Ministry of Health</div>
+                    <div class="text-[11px] sm:text-xs text-slate-300 font-medium">The Gambia</div>
+                </div>
+            </a>
+
+            <!-- Center Subtitle (Desktop only) -->
+            <div class="hidden lg:flex flex-col items-center text-center">
+                <span class="text-sm font-bold tracking-tight text-red-400">Super Administrator Command Center</span>
+                <span class="text-[11px] text-slate-300 font-medium">Tier-1 Cryptographic & RBAC Administration</span>
+            </div>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold">
+                <a href="../index.html" class="text-slate-300 hover:text-white transition flex items-center">
+                    <i class="fa-solid fa-house mr-1.5 text-blue-400"></i> Home
+                </a>
+                <a href="javascript:void(0)" onclick="openAdminHelpModal()" class="text-slate-300 hover:text-white transition flex items-center">
+                    <i class="fa-solid fa-shield-halved mr-1.5 text-red-400"></i> Security Support
+                </a>
+                <a href="../staff/login.html" class="text-slate-300 hover:text-white transition flex items-center">
+                    <i class="fa-solid fa-user-shield mr-1.5 text-emerald-400"></i> Staff Portal
+                </a>
+                <div class="flex items-center text-xs font-semibold text-red-300 bg-red-950/80 border border-red-800/80 rounded-lg px-2.5 py-1">
+                    <i class="fa-solid fa-lock mr-1.5 text-red-400"></i> Secure Session
+                </div>
+            </nav>
+
+            <!-- Mobile Hamburger Toggle Button -->
+            <div class="md:hidden flex items-center">
+                <button type="button" id="mobile-menu-toggle" class="text-white p-2 rounded-lg hover:bg-slate-800 focus:outline-none" aria-label="Toggle navigation menu">
+                    <i class="fa-solid fa-bars text-xl" id="hamburger-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Collapsible Menu Dropdown -->
+        <div id="mobile-menu-dropdown" class="hidden md:hidden bg-[#050f1c] border-t border-slate-800 px-4 py-4 space-y-3 text-xs font-medium">
+            <a href="../index.html" class="block text-white hover:text-blue-300 py-1.5 flex items-center">
+                <i class="fa-solid fa-house mr-2 text-blue-400 w-4"></i> OutbreakWatch Home
+            </a>
+            <a href="javascript:void(0)" onclick="openAdminHelpModal(); toggleMobileMenu();" class="block text-slate-300 hover:text-white py-1.5 flex items-center">
+                <i class="fa-solid fa-shield-halved mr-2 text-red-400 w-4"></i> Admin Security Protocol
+            </a>
+            <a href="../staff/login.html" class="block text-slate-300 hover:text-white py-1.5 flex items-center">
+                <i class="fa-solid fa-user-shield mr-2 text-emerald-400 w-4"></i> Staff Portal Login
+            </a>
+            <div class="pt-2 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+                <span>MoH Emergency Hotline: <strong class="text-red-400">1025</strong></span>
+                <span class="px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-900">Admin Zone</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ====================================================================== -->
+    <!-- MAIN CONTENT AREA                                                      -->
+    <!-- ====================================================================== -->
+    <main class="flex-1 flex items-center justify-center p-4 sm:p-6">
+        <div class="max-w-md w-full bg-[#0b2545] rounded-3xl border border-slate-700 shadow-2xl p-6 sm:p-8 space-y-6">
+            
+            <!-- MoH Gambia Logo & Seal -->
+            <div class="flex flex-col items-center text-center space-y-2">
+                <div class="w-16 h-16 flex items-center justify-center p-1 bg-white rounded-2xl shadow-lg border border-slate-700">
+                    <img src="../assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-white tracking-tight">Ministry of Health &bull; The Gambia</h1>
+                    <p class="text-xs text-red-400 font-semibold uppercase tracking-wider">Ebola Surveillance & QR Verification System</p>
+                </div>
+
+                <!-- Super Admin Badge -->
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/30 text-red-300 border border-red-500/40 text-[11px] font-bold uppercase tracking-wider mt-2">
+                    <i class="fa-solid fa-shield-halved text-red-400"></i> Super Administrator Portal
+                </div>
+            </div>
+
+            <!-- Explanatory note -->
+            <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 leading-relaxed">
+                <strong class="text-white block font-semibold mb-0.5"><i class="fa-solid fa-lock mr-1 text-red-400"></i> High-Privilege Security Zone:</strong>
+                Super Administrator has unrestricted authority to provision user credentials, assign roles, audit security trails, and configure national outbreak areas.
+            </div>
+
+            <!-- Alert Error Banner -->
+            <div id="error-alert" class="hidden p-3 rounded-xl bg-red-900/60 border border-red-700 text-red-200 text-xs text-center font-medium"></div>
+
+            <!-- Form -->
+            <form id="admin-login-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Admin Email Address *</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 text-xs">
+                            <i class="fa-solid fa-envelope"></i>
+                        </span>
+                        <input type="email" id="email" required placeholder="admin@health.gov.gm" value="admin@health.gov.gm" class="w-full rounded-xl bg-slate-900/90 border border-slate-700 p-2.5 pl-9 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Master Password *</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 text-xs">
+                            <i class="fa-solid fa-key"></i>
+                        </span>
+                        <input type="password" id="password" required placeholder="••••••••" value="Admin@2026!" class="w-full rounded-xl bg-slate-900/90 border border-slate-700 p-2.5 pl-9 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500">
+                    </div>
+                </div>
+
+                <button type="submit" id="login-btn" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center justify-center">
+                    <i class="fa-solid fa-right-to-bracket mr-2"></i> Authenticate as Super Admin
+                </button>
+            </form>
+
+            <!-- Quick 1-Click Demo Testing Button -->
+            <div class="pt-2 border-t border-slate-800 text-center space-y-2">
+                <button type="button" onclick="fillAdminCredentials()" class="text-xs text-slate-400 hover:text-white inline-flex items-center">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1.5 text-red-400"></i> Auto-fill Super Admin Credentials
+                </button>
+                <div class="text-[11px] text-slate-400">
+                    Are you a port health or surveillance officer? <a href="../staff/login.html" class="text-blue-400 hover:underline">Go to Staff Login</a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ====================================================================== -->
+    <!-- SUPER ADMIN SECURITY GUIDANCE MODAL                                    -->
+    <!-- ====================================================================== -->
+    <div id="admin-help-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-[#0b2545] rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-700 space-y-4 text-slate-200">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-700">
+                <div class="flex items-center space-x-2 text-white">
+                    <i class="fa-solid fa-shield-halved text-red-400 text-lg"></i>
+                    <h3 class="font-bold text-sm">Super Admin Security Protocol</h3>
+                </div>
+                <button type="button" onclick="closeAdminHelpModal()" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="text-xs space-y-2.5 leading-relaxed text-slate-300">
+                <p>
+                    <strong>Master Control Access:</strong> The Super Administrator account exercises root jurisdiction across all epidemiological subsystems:
+                </p>
+                <ul class="list-disc pl-5 space-y-1 text-slate-400">
+                    <li>Creation of authorized officer credentials and assignment of strict RBAC roles.</li>
+                    <li>Unrestricted review of the tamper-evident cryptographic system audit log.</li>
+                    <li>Dynamic outbreak area declarations and risk threshold parameterization.</li>
+                    <li>Supervision of surveillance queues and quarantine referrals.</li>
+                </ul>
+                <div class="p-2.5 rounded-lg bg-red-950/60 border border-red-800 text-red-200">
+                    All administrative operations generate an immutable record with timestamps, user identities, and action signatures.
+                </div>
+            </div>
+            <div class="pt-2 text-right">
+                <button type="button" onclick="closeAdminHelpModal()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-semibold">
+                    Acknowledge
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#050f1c] border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+        &copy; 2026 Ministry of Health, The Gambia &bull; Secure OutbreakWatch Infrastructure
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../assets/js/loader.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('mobile-menu-toggle');
+        const menuDropdown = document.getElementById('mobile-menu-dropdown');
+        const hamburgerIcon = document.getElementById('hamburger-icon');
+
+        function toggleMobileMenu() {
+            if (menuDropdown.classList.contains('hidden')) {
+                menuDropdown.classList.remove('hidden');
+                hamburgerIcon.classList.replace('fa-bars', 'fa-xmark');
+            } else {
+                menuDropdown.classList.add('hidden');
+                hamburgerIcon.classList.replace('fa-xmark', 'fa-bars');
+            }
+        }
+        if (menuToggle) menuToggle.addEventListener('click', toggleMobileMenu);
+
+        function openAdminHelpModal() {
+            document.getElementById('admin-help-modal').classList.remove('hidden');
+        }
+        function closeAdminHelpModal() {
+            document.getElementById('admin-help-modal').classList.add('hidden');
+        }
+
+        function fillAdminCredentials() {
+            document.getElementById('email').value = "admin@health.gov.gm";
+            document.getElementById('password').value = "Admin@2026!";
+        }
+
+        document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('login-btn');
+            const alertEl = document.getElementById('error-alert');
+            alertEl.classList.add('hidden');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Verifying Credentials...`;
+
+            try {
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+
+                await OutbreakAPI.loginAdmin(email, password);
+                window.location.href = 'index.html';
+            } catch (err) {
+                alertEl.textContent = err.message || "Invalid administrator credentials.";
+                alertEl.classList.remove('hidden');
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-right-to-bracket mr-2"></i> Authenticate as Super Admin`;
+            }
+        });
+    </script>
+</body>
+</html>

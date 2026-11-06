@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Symptoms & Case Exposure | OutbreakWatch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50">
+    <!-- Navbar -->
+    <header class="glass-nav border-b border-slate-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-md">
+                        <i class="fa-solid fa-virus-covid text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900">Outbreak<span class="text-red-600">Watch</span></span>
+                </a>
+            </div>
+            <nav class="flex items-center space-x-4">
+                <a href="index.html" class="text-sm font-medium text-slate-600 hover:text-slate-900">Outbreaks</a>
+                <a href="report.html" class="text-sm font-semibold text-red-600">Report Case</a>
+                <a href="admin/index.html" class="text-sm font-medium text-slate-600 hover:text-slate-900">Admin Portal</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 py-10 flex-1 w-full">
+        <div class="mb-8">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 text-red-800 text-xs font-semibold uppercase tracking-wider mb-2">
+                Public Case Intake
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Infectious Disease Case Reporting Form</h1>
+            <p class="text-sm text-slate-600 mt-1">
+                Please complete this form accurately if you or someone under your care is experiencing symptoms or has been in direct contact with a known outbreak case.
+            </p>
+        </div>
+
+        <!-- Outbreak Guidance Alert (Dynamically populated) -->
+        <div id="guidance-box" class="hidden mb-6 p-4 rounded-xl border border-red-200 bg-red-50 text-red-900 text-sm">
+            <div class="flex items-start">
+                <i class="fa-solid fa-shield-virus text-red-600 text-xl mr-3 mt-0.5"></i>
+                <div>
+                    <h3 class="font-bold text-red-900" id="guidance-title">Outbreak Guidance</h3>
+                    <p class="mt-1 text-red-800" id="guidance-text"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submission Form -->
+        <form id="report-form" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+            <!-- Outbreak Selection -->
+            <div>
+                <label for="outbreak_id" class="block text-sm font-semibold text-slate-800 mb-1">Target Outbreak *</label>
+                <select id="outbreak_id" required class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500 focus:outline-none">
+                    <option value="">Select an outbreak...</option>
+                </select>
+            </div>
+
+            <!-- Reporter Type -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="reporter_type" class="block text-sm font-semibold text-slate-800 mb-1">Reporting on behalf of</label>
+                    <select id="reporter_type" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500">
+                        <option value="self">Myself (Self-reporting)</option>
+                        <option value="family">Family Member / Dependent</option>
+                        <option value="healthcare_worker">Healthcare Worker / Clinic</option>
+                        <option value="observer">Community Observer</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="patient_name" class="block text-sm font-semibold text-slate-800 mb-1">Patient Full Name *</label>
+                    <input type="text" id="patient_name" required placeholder="e.g. John Doe" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500">
+                </div>
+            </div>
+
+            <!-- Patient Demographics -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="patient_age" class="block text-sm font-semibold text-slate-800 mb-1">Age</label>
+                    <input type="number" id="patient_age" min="0" max="120" placeholder="e.g. 35" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500">
+                </div>
+                <div>
+                    <label for="patient_gender" class="block text-sm font-semibold text-slate-800 mb-1">Gender</label>
+                    <select id="patient_gender" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500">
+                        <option value="undisclosed">Prefer not to say</option>
+                        <option value="female">Female</option>
+                        <option value="male">Male</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="contact_phone" class="block text-sm font-semibold text-slate-800 mb-1">Phone Number *</label>
+                    <input type="tel" id="contact_phone" required placeholder="e.g. +1 555-0199 or local phone" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500">
+                </div>
+                <div>
+                    <label for="contact_email" class="block text-sm font-semibold text-slate-800 mb-1">Email Address (Optional)</label>
+                    <input type="email" id="contact_email" placeholder="patient@example.com" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500">
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div>
+                <label for="location_address" class="block text-sm font-semibold text-slate-800 mb-1">Current Physical Location / Address / Community *</label>
+                <input type="text" id="location_address" required placeholder="e.g. Street, Neighborhood, District, City" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500">
+            </div>
+
+            <!-- Symptoms Checklist (Dynamic) -->
+            <div class="pt-4 border-t border-slate-200">
+                <label class="block text-sm font-bold text-slate-900 mb-2">Symptoms Currently Experienced</label>
+                <p class="text-xs text-slate-500 mb-3">Check all symptoms that apply to the individual:</p>
+                <div id="symptoms-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <p class="text-xs text-slate-400 italic">Select an outbreak above to load tailored clinical symptoms checklist.</p>
+                </div>
+            </div>
+
+            <!-- Onset Date & Exposure -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-200">
+                <div>
+                    <label for="symptom_onset_date" class="block text-sm font-semibold text-slate-800 mb-1">Date Symptoms Started</label>
+                    <input type="date" id="symptom_onset_date" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500">
+                </div>
+                <div class="flex items-center pt-6">
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="had_contact_with_case" class="w-4 h-4 text-red-600 rounded border-slate-300 focus:ring-red-500">
+                        <span class="ml-2.5 text-sm font-medium text-slate-700">Had known contact with a confirmed or suspected case</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Travel History & Notes -->
+            <div>
+                <label for="recent_travel_history" class="block text-sm font-semibold text-slate-800 mb-1">Recent Travel History (Last 21 Days)</label>
+                <input type="text" id="recent_travel_history" placeholder="e.g. Traveled to neighboring district, border crossing, funeral attendance" class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500">
+            </div>
+
+            <div>
+                <label for="additional_notes" class="block text-sm font-semibold text-slate-800 mb-1">Additional Observations / Pre-existing Conditions</label>
+                <textarea id="additional_notes" rows="3" placeholder="Provide any other details to assist the rapid response clinical team..." class="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-red-500"></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-4">
+                <button type="submit" id="submit-btn" class="w-full py-3.5 px-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> Submit Surveillance Report
+                </button>
+            </div>
+        </form>
+
+        <!-- Success Modal / Card -->
+        <div id="success-card" class="hidden mt-8 p-6 bg-emerald-50 rounded-2xl border border-emerald-200 text-emerald-900 text-center">
+            <div class="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center mx-auto mb-3">
+                <i class="fa-solid fa-check text-xl"></i>
+            </div>
+            <h2 class="text-xl font-bold">Report Submitted Successfully</h2>
+            <p class="text-sm mt-1 text-emerald-800">Your surveillance case reference ID is: <strong id="report-ref-id"></strong></p>
+            <p class="text-xs mt-2 text-emerald-700">The epidemiological triage unit has been notified. Keep your phone accessible for follow-up.</p>
+            <div class="mt-4 flex justify-center gap-3">
+                <a href="index.html" class="px-4 py-2 bg-white text-emerald-800 border border-emerald-300 rounded-lg text-xs font-semibold hover:bg-emerald-100">Back to Dashboard</a>
+                <button onclick="location.reload()" class="px-4 py-2 bg-emerald-700 text-white rounded-lg text-xs font-semibold hover:bg-emerald-800">Submit Another Report</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="./assets/js/api.js"></script>
+    <script src="./assets/js/main.js"></script>
+    <script>
+        let outbreaksCache = [];
+
+        async function initForm() {
+            try {
+                outbreaksCache = await OutbreakAPI.getOutbreaks();
+                const select = document.getElementById('outbreak_id');
+                select.innerHTML = '<option value="">Select an active outbreak...</option>' + 
+                    outbreaksCache.map(o => `<option value="${o.id}">${o.name} (${o.disease})</option>`).join('');
+
+                // Check query param e.g. ?outbreak_id=xxx
+                const params = new URLSearchParams(window.location.search);
+                const preselectedId = params.get('outbreak_id');
+                if (preselectedId) {
+                    select.value = preselectedId;
+                    onOutbreakSelected(preselectedId);
+                }
+            } catch (err) {
+                console.error("Failed to load outbreaks:", err);
+                showNotification("Failed to load outbreaks from server", "error");
+            }
+        }
+
+        function onOutbreakSelected(outbreakId) {
+            const outbreak = outbreaksCache.find(o => o.id === outbreakId);
+            const guidanceBox = document.getElementById('guidance-box');
+            const symptomsList = document.getElementById('symptoms-list');
+
+            if (!outbreak) {
+                guidanceBox.classList.add('hidden');
+                symptomsList.innerHTML = `<p class="text-xs text-slate-400 italic">Select an outbreak above to load tailored clinical symptoms checklist.</p>`;
+                return;
+            }
+
+            // Display guidance
+            if (outbreak.guidance_notes) {
+                document.getElementById('guidance-title').textContent = `${outbreak.name} - Safety Instructions`;
+                document.getElementById('guidance-text').textContent = outbreak.guidance_notes;
+                guidanceBox.classList.remove('hidden');
+            } else {
+                guidanceBox.classList.add('hidden');
+            }
+
+            // Display symptoms checklist
+            const checklist = outbreak.symptoms_checklist || [];
+            if (checklist.length > 0) {
+                symptomsList.innerHTML = checklist.map((sym, index) => `
+                    <label class="flex items-center p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer text-sm">
+                        <input type="checkbox" name="symptoms" value="${sym}" class="w-4 h-4 text-red-600 rounded border-slate-300 focus:ring-red-500">
+                        <span class="ml-2.5 text-slate-800">${sym}</span>
+                    </label>
+                `).join('');
+            } else {
+                symptomsList.innerHTML = `
+                    <label class="flex items-center p-2 rounded border border-slate-200">
+                        <input type="checkbox" name="symptoms" value="Fever" class="w-4 h-4 text-red-600">
+                        <span class="ml-2 text-sm">Fever / Chills</span>
+                    </label>
+                    <label class="flex items-center p-2 rounded border border-slate-200">
+                        <input type="checkbox" name="symptoms" value="Weakness" class="w-4 h-4 text-red-600">
+                        <span class="ml-2 text-sm">Severe Weakness</span>
+                    </label>
+                `;
+            }
+        }
+
+        document.getElementById('outbreak_id').addEventListener('change', (e) => onOutbreakSelected(e.target.value));
+
+        document.getElementById('report-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Submitting Report...`;
+
+            try {
+                const selectedSymptoms = Array.from(document.querySelectorAll('input[name="symptoms"]:checked')).map(cb => cb.value);
+
+                const payload = {
+                    outbreak_id: document.getElementById('outbreak_id').value,
+                    reporter_type: document.getElementById('reporter_type').value,
+                    patient_name: document.getElementById('patient_name').value.trim(),
+                    patient_age: document.getElementById('patient_age').value ? parseInt(document.getElementById('patient_age').value) : null,
+                    patient_gender: document.getElementById('patient_gender').value,
+                    contact_phone: document.getElementById('contact_phone').value.trim(),
+                    contact_email: document.getElementById('contact_email').value.trim() || null,
+                    location_address: document.getElementById('location_address').value.trim(),
+                    symptoms_experienced: selectedSymptoms,
+                    symptom_onset_date: document.getElementById('symptom_onset_date').value || null,
+                    had_contact_with_case: document.getElementById('had_contact_with_case').checked,
+                    recent_travel_history: document.getElementById('recent_travel_history').value.trim() || null,
+                    additional_notes: document.getElementById('additional_notes').value.trim() || null
+                };
+
+                const result = await OutbreakAPI.submitReport(payload);
+                document.getElementById('report-form').classList.add('hidden');
+                document.getElementById('report-ref-id').textContent = result.id;
+                document.getElementById('success-card').classList.remove('hidden');
+                showNotification("Surveillance report successfully registered!", "success");
+            } catch (err) {
+                console.error("Submission failed:", err);
+                showNotification(err.message || "Failed to submit report", "error");
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane mr-2"></i> Submit Surveillance Report`;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', initForm);
+    </script>
+</body>
+</html>
+

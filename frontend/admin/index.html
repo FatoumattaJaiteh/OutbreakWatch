@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Command Center | Ministry of Health, The Gambia</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="min-h-screen flex flex-col bg-[#f0f4f9] text-slate-800">
+
+    <!-- ====================================================================== -->
+    <!-- FLIGHT LINE LOADING SCREEN                                             -->
+    <!-- Plane mounted at the moving edge of the loading line                  -->
+    <!-- Secondary Brand Background Color (#0b2545)                             -->
+    <!-- ====================================================================== -->
+    <div id="page-loader" class="fixed inset-0 z-[100] bg-[#0b2545] flex flex-col items-center justify-center p-4 sm:p-6 transition-all duration-700 ease-out text-white">
+        <div class="max-w-xl w-full flex flex-col items-center text-center space-y-8 px-4">
+            
+            <!-- Official Coat of Arms & Government Title (Bold, Bigger, Properly Aligned) -->
+            <div class="flex flex-col items-center space-y-3">
+                <img src="../assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-2xl">
+                <div class="space-y-1">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-wide uppercase text-white drop-shadow-sm">
+                        Ministry of Health
+                    </h1>
+                    <h2 class="text-base sm:text-lg font-bold tracking-widest uppercase text-sky-400">
+                        The Gambia
+                    </h2>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-300 tracking-normal pt-0.5">
+                        National Command & Governance Console
+                    </p>
+                </div>
+            </div>
+
+            <!-- The Loading Line with Plane Mounted Directly at the Edge -->
+            <div class="w-full max-w-md sm:max-w-lg space-y-3 pt-2">
+                <!-- Track Container -->
+                <div class="w-full bg-slate-900/90 rounded-full h-3 p-0.5 border border-slate-700 shadow-inner relative overflow-visible">
+                    <!-- Progress Line (Expanding 0% to 100%) -->
+                    <div id="loader-line" class="h-full bg-gradient-to-r from-red-600 via-sky-400 to-emerald-400 rounded-full relative transition-[width] duration-75 ease-linear shadow-[0_0_12px_rgba(56,189,248,0.5)]" style="width: 0%;">
+                        <!-- Airplane: Mounted right at the leading edge of the line -->
+                        <div class="absolute -right-5 sm:-right-6 top-1/2 -translate-y-1/2 pointer-events-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] z-10">
+                            <svg width="48" height="28" viewBox="-32 -16 80 32" class="w-10 h-6 sm:w-12 sm:h-7 overflow-visible">
+                                <!-- Fuselage with Gambian Tricolor Livery -->
+                                <path d="M -26,0 C -26,-5 -16,-8 -2,-8 L 24,-8 C 34,-8 40,-4 44,0 C 40,4 34,8 24,8 L -2,8 C -16,8 -26,5 -26,0 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+                                <path d="M 34,-4 C 38,-2 40,-1 41,0 L 36,0 Z" fill="#0b2545"/>
+                                <!-- Gambian Livery Stripes -->
+                                <path d="M -16,-2.5 L 30,-2.5" stroke="#ce1126" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M -16,0 L 32,0" stroke="#0c1c8c" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M -16,2.5 L 28,2.5" stroke="#3a7728" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="-10" y1="-5" x2="22" y2="-5" stroke="#64748b" stroke-width="1.2" stroke-dasharray="2 2"/>
+                                <!-- Wing & Engine -->
+                                <path d="M -2,0 L 14,14 L 7,14 L -8,0 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                                <line x1="7" y1="13" x2="13" y2="13" stroke="#ce1126" stroke-width="1.5"/>
+                                <rect x="2" y="7" width="11" height="5" rx="2.5" fill="#07172c"/>
+                                <ellipse cx="13" cy="9.5" rx="1.5" ry="2.2" fill="#38bdf8"/>
+                                <ellipse cx="0" cy="9.5" rx="3" ry="1.5" fill="rgba(56,189,248,0.85)"/>
+                                <!-- Tail Fin with Gambian Stripes -->
+                                <path d="M -23,-2 L -31,-16 L -20,-16 L -13,-2 Z" fill="#0c1c8c"/>
+                                <path d="M -29,-13 L -21,-13" stroke="#ce1126" stroke-width="2"/>
+                                <path d="M -26,-7 L -17,-7" stroke="#3a7728" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text & Percentage (Properly Aligned, Bold, Bigger) -->
+                <div class="flex items-center justify-between w-full px-1 text-slate-200">
+                    <span id="loader-status" class="text-sm sm:text-base font-bold text-sky-300 tracking-wide">
+                        Loading Governance Workspace...
+                    </span>
+                    <span id="loader-percent" class="text-base sm:text-lg font-black font-mono text-white tracking-wider">
+                        0%
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Top Navigation (Super Admin Command Center) -->
+    <header class="bg-[#0b2545] text-white border-b border-slate-800 sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <!-- Brand with Official Gambia Coat of Arms -->
+            <a href="../index.html" class="flex items-center space-x-3 text-white">
+                <img src="../assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-10 h-10 object-contain drop-shadow">
+                <div>
+                    <div class="text-xs sm:text-sm font-bold leading-tight">Ministry of Health</div>
+                    <div class="text-[11px] sm:text-xs text-red-300 font-semibold tracking-wide">The Gambia &bull; Super Admin</div>
+                </div>
+            </a>
+
+            <!-- Center Subtitle (Desktop only) -->
+            <div class="hidden lg:flex flex-col items-center text-center">
+                <span class="text-sm font-bold tracking-tight text-white">Ebola Surveillance & QR Verification System</span>
+                <span class="text-[11px] text-blue-200 font-medium">National Command & Governance Console</span>
+            </div>
+
+            <!-- Right Controls: Status, Help, Profile, Logout -->
+            <div class="flex items-center space-x-3">
+                <!-- System Status Indicator -->
+                <div class="hidden md:inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-950/80 text-emerald-300 border border-emerald-800/70">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> Live Active
+                </div>
+
+                <!-- Admin Help / Docs Modal Trigger -->
+                <button type="button" onclick="openAdminDocsModal()" class="hidden sm:inline-flex items-center text-xs text-slate-200 hover:text-white bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-700 transition">
+                    <i class="fa-solid fa-circle-question mr-1.5 text-amber-400"></i> Help & Guides
+                </button>
+
+                <!-- Profile Badge -->
+                <div class="flex items-center text-xs text-slate-200 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-700">
+                    <i class="fa-solid fa-crown text-amber-400 mr-1.5"></i> <span id="admin-user-display" class="font-bold text-white">Super Admin</span>
+                </div>
+
+                <!-- Logout Button -->
+                <button onclick="logoutAdmin()" class="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg font-semibold shadow-sm transition flex items-center">
+                    <i class="fa-solid fa-power-off mr-1"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <div class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col lg:flex-row gap-6">
+
+        <!-- Left Admin Navigation Sidebar -->
+        <aside class="w-full lg:w-60 bg-[#0b2545] text-white rounded-2xl p-4 shadow-md shrink-0 space-y-2 h-fit">
+            <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">System Controls</div>
+            <button onclick="showAdminTab('users')" id="tab-btn-users" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-white bg-red-600 shadow-sm transition">
+                <i class="fa-solid fa-users-gear text-sm w-4"></i>
+                <span>User & Role Provisioning</span>
+            </button>
+            <button onclick="showAdminTab('audit')" id="tab-btn-audit" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition">
+                <i class="fa-solid fa-clock-rotate-left text-sm w-4"></i>
+                <span>System Audit Logs</span>
+            </button>
+            <button onclick="showAdminTab('surveillance')" id="tab-btn-surveillance" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition">
+                <i class="fa-solid fa-table-list text-sm w-4"></i>
+                <span>Surveillance Queue</span>
+            </button>
+            <button onclick="showAdminTab('outbreaks')" id="tab-btn-outbreaks" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition">
+                <i class="fa-solid fa-earth-africa text-sm w-4"></i>
+                <span>Outbreak Configurations</span>
+            </button>
+            <div class="pt-4 border-t border-slate-700/80">
+                <a href="../staff/index.html" target="_blank" class="w-full flex items-center space-x-3 px-3.5 py-2 text-xs font-semibold text-blue-300 hover:text-blue-100 transition">
+                    <i class="fa-solid fa-arrow-up-right-from-square text-sm w-4"></i>
+                    <span>Open Staff Portal</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Right Workspace Area -->
+        <main class="flex-1 space-y-6">
+
+            <!-- ============================================================== -->
+            <!-- TAB 1: USER & ROLE PROVISIONING                                -->
+            <!-- ============================================================== -->
+            <div id="tab-users-container" class="space-y-6">
+                
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-200 mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Provision Staff Account & Assign Role</h2>
+                            <p class="text-xs text-slate-500 mt-1">Super Administrator provisions authorized user credentials and assigns strict role permissions.</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-[#0066cc]">Role-Based Access Control</span>
+                    </div>
+
+                    <form id="create-user-form" class="space-y-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Full Name *</label>
+                                <input type="text" id="u_name" required placeholder="e.g. Dr. Bamba Njie" class="form-input-styled">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Login Email Address *</label>
+                                <input type="email" id="u_email" required placeholder="e.g. b.njie@health.gov.gm" class="form-input-styled">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Assigned Password *</label>
+                                <input type="password" id="u_password" required placeholder="Minimum 6 characters" class="form-input-styled">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Station / Port of Entry</label>
+                                <input type="text" id="u_station" value="Banjul International Airport (BJL)" class="form-input-styled">
+                            </div>
+                        </div>
+
+                        <!-- Role Type Radio Selection (Exact Spec from User Prompt) -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Select Assigned Role Type & Permissions *</label>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <!-- Role 1: Airport Screening Officer -->
+                                <label class="p-3.5 rounded-xl border-2 border-slate-200 hover:border-[#0066cc] cursor-pointer transition flex items-start space-x-3 bg-slate-50/50 has-[:checked]:border-[#0066cc] has-[:checked]:bg-blue-50/40">
+                                    <input type="radio" name="assigned_role" value="screening_officer" checked class="mt-1 text-[#0066cc] focus:ring-[#0066cc]">
+                                    <div class="text-xs">
+                                        <div class="font-bold text-slate-900 flex items-center">
+                                            <i class="fa-solid fa-qrcode text-[#0066cc] mr-1.5"></i> Airport Screening Officer
+                                        </div>
+                                        <p class="text-slate-500 mt-1 leading-relaxed">
+                                            Authenticate, scan QR, view permitted screening summary, record screening outcome and refer cases.
+                                        </p>
+                                    </div>
+                                </label>
+
+                                <!-- Role 2: Surveillance Officer -->
+                                <label class="p-3.5 rounded-xl border-2 border-slate-200 hover:border-purple-600 cursor-pointer transition flex items-start space-x-3 bg-slate-50/50 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50/40">
+                                    <input type="radio" name="assigned_role" value="surveillance_officer" class="mt-1 text-purple-600 focus:ring-purple-600">
+                                    <div class="text-xs">
+                                        <div class="font-bold text-slate-900 flex items-center">
+                                            <i class="fa-solid fa-virus-covid text-purple-600 mr-1.5"></i> Surveillance / Public-Health Officer
+                                        </div>
+                                        <p class="text-slate-500 mt-1 leading-relaxed">
+                                            Review exposure details, assess risk, record official decisions, assign monitoring and follow-up.
+                                        </p>
+                                    </div>
+                                </label>
+
+                                <!-- Role 3: Public-Health Supervisor -->
+                                <label class="p-3.5 rounded-xl border-2 border-slate-200 hover:border-amber-600 cursor-pointer transition flex items-start space-x-3 bg-slate-50/50 has-[:checked]:border-amber-600 has-[:checked]:bg-amber-50/40">
+                                    <input type="radio" name="assigned_role" value="supervisor" class="mt-1 text-amber-600 focus:ring-amber-600">
+                                    <div class="text-xs">
+                                        <div class="font-bold text-slate-900 flex items-center">
+                                            <i class="fa-solid fa-user-tie text-amber-600 mr-1.5"></i> Public-Health Supervisor
+                                        </div>
+                                        <p class="text-slate-500 mt-1 leading-relaxed">
+                                            Approve rules, review escalations, monitor workload and reports.
+                                        </p>
+                                    </div>
+                                </label>
+
+                                <!-- Role 4: Auditor / Data-Protection Officer -->
+                                <label class="p-3.5 rounded-xl border-2 border-slate-200 hover:border-emerald-600 cursor-pointer transition flex items-start space-x-3 bg-slate-50/50 has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50/40">
+                                    <input type="radio" name="assigned_role" value="auditor" class="mt-1 text-emerald-600 focus:ring-emerald-600">
+                                    <div class="text-xs">
+                                        <div class="font-bold text-slate-900 flex items-center">
+                                            <i class="fa-solid fa-clipboard-check text-emerald-600 mr-1.5"></i> Auditor / Data-Protection Officer
+                                        </div>
+                                        <p class="text-slate-500 mt-1 leading-relaxed">
+                                            Review access logs, policy compliance, retention and data handling.
+                                        </p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 flex justify-end">
+                            <button type="submit" id="create-user-btn" class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center">
+                                <i class="fa-solid fa-user-plus mr-2"></i> Create Staff Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Existing Users Table -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between">
+                        <h3 class="font-bold text-slate-900 text-sm">Active Staff Accounts & Assigned Permissions</h3>
+                        <span id="user-count-badge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">-</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 font-bold uppercase text-[11px] border-b border-slate-200">
+                                    <th class="p-3.5">Staff Officer</th>
+                                    <th class="p-3.5">Assigned Role</th>
+                                    <th class="p-3.5">Station</th>
+                                    <th class="p-3.5">Status</th>
+                                    <th class="p-3.5 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-tbody" class="divide-y divide-slate-100">
+                                <tr><td colspan="5" class="text-center py-8 text-slate-400">Loading accounts...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- TAB 2: SYSTEM AUDIT LOGS                                       -->
+            <!-- ============================================================== -->
+            <div id="tab-audit-container" class="hidden space-y-4">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-5 border-b border-slate-200 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Tamper-Evident System Audit Trail</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">Logs of logins, user creations, QR scans, and disposition overrides.</p>
+                        </div>
+                        <button onclick="loadAuditLogs()" class="px-3 py-1.5 border border-slate-300 text-xs rounded-lg hover:bg-slate-50">
+                            <i class="fa-solid fa-arrows-rotate mr-1"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 font-bold uppercase text-[11px] border-b border-slate-200">
+                                    <th class="p-3">Timestamp (UTC)</th>
+                                    <th class="p-3">Actor / Officer</th>
+                                    <th class="p-3">Role</th>
+                                    <th class="p-3">Action</th>
+                                    <th class="p-3">Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-tbody" class="divide-y divide-slate-100 font-mono text-[11px]">
+                                <tr><td colspan="5" class="text-center py-8 text-slate-400">Loading audit events...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- TAB 3: SURVEILLANCE QUEUE                                      -->
+            <!-- ============================================================== -->
+            <div id="tab-surveillance-container" class="hidden space-y-4">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-base font-bold text-slate-900">All Airport Screening Declarations (Super Admin Oversight)</h2>
+                        <span class="text-xs text-slate-500">Unrestricted full-view</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 font-bold uppercase text-[11px]">
+                                    <th class="p-3">Passenger</th>
+                                    <th class="p-3">Reference</th>
+                                    <th class="p-3">Triage</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-queue-tbody" class="divide-y divide-slate-100">
+                                <tr><td colspan="5" class="text-center py-8 text-slate-400">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- TAB 4: OUTBREAK CONFIGURATIONS                                  -->
+            <!-- ============================================================== -->
+            <div id="tab-outbreaks-container" class="hidden space-y-4">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                    <h2 class="text-base font-bold text-slate-900 mb-2">Configured Outbreak Corridors</h2>
+                    <p class="text-xs text-slate-500 mb-4">Areas automatically evaluated as risk sources by the rules engine.</p>
+                    <div class="space-y-3" id="outbreaks-cards-list"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/loader.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script>
+        // Check Admin Auth Guard
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = OutbreakAPI.getCurrentUser();
+            if (!user || user.role !== 'super_admin') {
+                window.location.href = 'login.html';
+                return;
+            }
+            document.getElementById('admin-user-display').textContent = user.full_name;
+            loadUsers();
+            loadAuditLogs();
+            loadSurveillanceQueue();
+            loadOutbreakConfigs();
+        });
+
+        function logoutAdmin() {
+            OutbreakAPI.logout('login.html');
+        }
+
+        function showAdminTab(tab) {
+            ['users', 'audit', 'surveillance', 'outbreaks'].forEach(t => {
+                document.getElementById(`tab-${t}-container`).classList.add('hidden');
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (btn) btn.className = "w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition";
+            });
+
+            document.getElementById(`tab-${tab}-container`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tab}`);
+            if (activeBtn) activeBtn.className = "w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-white bg-red-600 shadow-sm transition";
+        }
+
+        // 1. Users Management
+        async function loadUsers() {
+            try {
+                const users = await OutbreakAPI.listUsers();
+                document.getElementById('user-count-badge').textContent = `${users.length} registered accounts`;
+                const tbody = document.getElementById('users-tbody');
+
+                tbody.innerHTML = users.map(u => {
+                    let roleBadge = "bg-slate-100 text-slate-700";
+                    if (u.role === 'super_admin') roleBadge = "bg-red-100 text-red-700 font-bold";
+                    else if (u.role === 'screening_officer') roleBadge = "bg-blue-100 text-blue-700 font-bold";
+                    else if (u.role === 'surveillance_officer') roleBadge = "bg-purple-100 text-purple-700 font-bold";
+                    else if (u.role === 'supervisor') roleBadge = "bg-amber-100 text-amber-700 font-bold";
+                    else if (u.role === 'auditor') roleBadge = "bg-emerald-100 text-emerald-700 font-bold";
+
+                    return `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-3.5">
+                                <strong class="text-slate-900 block">${u.full_name}</strong>
+                                <span class="text-slate-500 font-mono text-[11px]">${u.email}</span>
+                            </td>
+                            <td class="p-3.5">
+                                <span class="px-2.5 py-1 rounded-full text-[11px] ${roleBadge}">${u.role_title}</span>
+                            </td>
+                            <td class="p-3.5 text-slate-600">${u.station}</td>
+                            <td class="p-3.5">
+                                <span class="inline-flex items-center text-emerald-600 font-semibold text-xs">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span> Active
+                                </span>
+                            </td>
+                            <td class="p-3.5 text-right">
+                                ${u.role === 'super_admin' ? '<span class="text-slate-400 text-[10px] font-bold">ROOT</span>' : `
+                                    <button onclick="deleteStaffAccount('${u.id}', '${u.full_name}')" class="px-2.5 py-1 text-red-600 hover:bg-red-50 rounded-lg text-xs font-semibold transition">
+                                        <i class="fa-solid fa-trash-can mr-1"></i> Delete
+                                    </button>
+                                `}
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error("Failed to load users:", err);
+            }
+        }
+
+        document.getElementById('create-user-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('create-user-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Creating Account...`;
+
+            try {
+                const selectedRole = document.querySelector('input[name="assigned_role"]:checked').value;
+                const payload = {
+                    full_name: document.getElementById('u_name').value.trim(),
+                    email: document.getElementById('u_email').value.trim(),
+                    password: document.getElementById('u_password').value,
+                    station: document.getElementById('u_station').value.trim(),
+                    role: selectedRole
+                };
+
+                await OutbreakAPI.createUser(payload);
+                alert(`Staff account provisioned successfully with role: ${selectedRole}`);
+                document.getElementById('create-user-form').reset();
+                loadUsers();
+                loadAuditLogs();
+            } catch (err) {
+                alert("Error creating staff account: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-user-plus mr-2"></i> Create Staff Account`;
+            }
+        });
+
+        async function deleteStaffAccount(userId, name) {
+            if (!confirm(`Are you sure you want to deactivate and remove ${name}?`)) return;
+            try {
+                await OutbreakAPI.deleteUser(userId);
+                loadUsers();
+                loadAuditLogs();
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+
+        // 2. Audit Logs
+        async function loadAuditLogs() {
+            try {
+                const logs = await OutbreakAPI.getAuditLogs();
+                const tbody = document.getElementById('audit-tbody');
+                tbody.innerHTML = logs.map(l => `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3 text-slate-500 whitespace-nowrap">${new Date(l.timestamp).toLocaleString()}</td>
+                        <td class="p-3 font-bold text-slate-800">${l.actor_name}</td>
+                        <td class="p-3 text-slate-600">${l.actor_role}</td>
+                        <td class="p-3 font-semibold text-blue-600">${l.action}</td>
+                        <td class="p-3 text-slate-600">${l.details}</td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error("Audit load error:", err);
+            }
+        }
+
+        // 3. Surveillance Queue
+        async function loadSurveillanceQueue() {
+            try {
+                const queue = await OutbreakAPI.getStaffSubmissions();
+                const tbody = document.getElementById('admin-queue-tbody');
+                tbody.innerHTML = queue.map(q => `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3 font-bold text-slate-800">${q.traveller.full_name}</td>
+                        <td class="p-3 font-mono text-slate-600">${q.reference_code}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[11px] font-bold ${q.preliminary_risk_category === 'HIGH' ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'}">${q.preliminary_risk_category}</span></td>
+                        <td class="p-3 text-slate-500">${q.status}</td>
+                        <td class="p-3 text-right">
+                            <a href="../staff/index.html?view_id=${q.id}" target="_blank" class="px-2.5 py-1 bg-slate-900 text-white rounded text-xs font-semibold">
+                                Review &rarr;
+                            </a>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // 4. Outbreak Configs
+        async function loadOutbreakConfigs() {
+            try {
+                const areas = await OutbreakAPI.getOutbreakAreas();
+                const container = document.getElementById('outbreaks-cards-list');
+                container.innerHTML = areas.map(a => `
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between text-xs">
+                        <div>
+                            <strong class="text-sm font-bold text-slate-900">${a.country_name} (${a.country_code})</strong>
+                            <p class="text-red-600 font-semibold">${a.disease_name}</p>
+                            <p class="text-slate-500 mt-1">Affected Districts: ${(a.affected_regions || []).join(', ')}</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 uppercase">Active Rule</span>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Help & Docs Modal Controls
+        function openAdminDocsModal() {
+            document.getElementById('admin-docs-modal').classList.remove('hidden');
+        }
+        function closeAdminDocsModal() {
+            document.getElementById('admin-docs-modal').classList.add('hidden');
+        }
+    </script>
+
+    <!-- Super Admin Documentation Modal -->
+    <div id="admin-docs-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center space-x-2 text-[#0b2545]">
+                    <i class="fa-solid fa-book-bookmark text-red-600 text-lg"></i>
+                    <h3 class="font-bold text-base">Super Administrator Architecture Guide</h3>
+                </div>
+                <button type="button" onclick="closeAdminDocsModal()" class="text-slate-400 hover:text-slate-600 text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="text-xs text-slate-600 space-y-3 leading-relaxed max-h-[60vh] overflow-y-auto pr-1">
+                <div class="p-3 bg-red-50 rounded-xl border border-red-100 text-red-900">
+                    <strong class="block mb-1 font-bold"><i class="fa-solid fa-crown mr-1"></i> Root Administration Authority:</strong>
+                    As the Super Administrator, you are the highest privilege holder in the Ebola Traveller Screening & Surveillance ecosystem.
+                </div>
+                <h4 class="font-bold text-slate-900 uppercase tracking-wider text-[11px]">Key Governance Modules</h4>
+                <ul class="list-disc pl-5 space-y-1.5">
+                    <li><strong>Role Provisioning:</strong> Create accounts for officers across 4 functional tiers: <em>Screening Officer</em>, <em>Surveillance Officer</em>, <em>Supervisor</em>, and <em>Auditor / DPO</em>.</li>
+                    <li><strong>Audit Logging:</strong> Monitor an immutable ledger recording every login, triage event, risk override, and user creation event.</li>
+                    <li><strong>Surveillance Oversight:</strong> Inspect incoming declarations from Banjul International Airport (BJL) and track quarantine transfers.</li>
+                    <li><strong>Outbreak Area Triggers:</strong> Manage active country declarations (e.g. Uganda, DRC) that inform the 21-day timeline risk matrix.</li>
+                </ul>
+            </div>
+            <div class="pt-3 border-t border-slate-100 text-right">
+                <button type="button" onclick="closeAdminDocsModal()" class="px-5 py-2.5 bg-[#0b2545] hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow transition">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

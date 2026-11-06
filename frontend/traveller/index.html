@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ebola Traveller Screening System | Ministry of Health, The Gambia</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="min-h-screen flex flex-col bg-[#f0f4f9] text-slate-800">
+
+    <!-- ====================================================================== -->
+    <!-- FLIGHT LINE LOADING SCREEN                                             -->
+    <!-- Plane mounted at the moving edge of the loading line                  -->
+    <!-- Secondary Brand Background Color (#0b2545)                             -->
+    <!-- ====================================================================== -->
+    <div id="page-loader" class="fixed inset-0 z-[100] bg-[#0b2545] flex flex-col items-center justify-center p-4 sm:p-6 transition-all duration-700 ease-out text-white">
+        <div class="max-w-xl w-full flex flex-col items-center text-center space-y-8 px-4">
+            
+            <!-- Official Coat of Arms & Government Title (Bold, Bigger, Properly Aligned) -->
+            <div class="flex flex-col items-center space-y-3">
+                <img src="../assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-2xl">
+                <div class="space-y-1">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-wide uppercase text-white drop-shadow-sm">
+                        Ministry of Health
+                    </h1>
+                    <h2 class="text-base sm:text-lg font-bold tracking-widest uppercase text-sky-400">
+                        The Gambia
+                    </h2>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-300 tracking-normal pt-0.5">
+                        Traveller Health Declaration Portal
+                    </p>
+                </div>
+            </div>
+
+            <!-- The Loading Line with Plane Mounted Directly at the Edge -->
+            <div class="w-full max-w-md sm:max-w-lg space-y-3 pt-2">
+                <!-- Track Container -->
+                <div class="w-full bg-slate-900/90 rounded-full h-3 p-0.5 border border-slate-700 shadow-inner relative overflow-visible">
+                    <!-- Progress Line (Expanding 0% to 100%) -->
+                    <div id="loader-line" class="h-full bg-gradient-to-r from-red-600 via-sky-400 to-emerald-400 rounded-full relative transition-[width] duration-75 ease-linear shadow-[0_0_12px_rgba(56,189,248,0.5)]" style="width: 0%;">
+                        <!-- Airplane: Mounted right at the leading edge of the line -->
+                        <div class="absolute -right-5 sm:-right-6 top-1/2 -translate-y-1/2 pointer-events-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] z-10">
+                            <svg width="48" height="28" viewBox="-32 -16 80 32" class="w-10 h-6 sm:w-12 sm:h-7 overflow-visible">
+                                <!-- Fuselage with Gambian Tricolor Livery -->
+                                <path d="M -26,0 C -26,-5 -16,-8 -2,-8 L 24,-8 C 34,-8 40,-4 44,0 C 40,4 34,8 24,8 L -2,8 C -16,8 -26,5 -26,0 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+                                <path d="M 34,-4 C 38,-2 40,-1 41,0 L 36,0 Z" fill="#0b2545"/>
+                                <!-- Gambian Livery Stripes -->
+                                <path d="M -16,-2.5 L 30,-2.5" stroke="#ce1126" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M -16,0 L 32,0" stroke="#0c1c8c" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M -16,2.5 L 28,2.5" stroke="#3a7728" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="-10" y1="-5" x2="22" y2="-5" stroke="#64748b" stroke-width="1.2" stroke-dasharray="2 2"/>
+                                <!-- Wing & Engine -->
+                                <path d="M -2,0 L 14,14 L 7,14 L -8,0 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+                                <line x1="7" y1="13" x2="13" y2="13" stroke="#ce1126" stroke-width="1.5"/>
+                                <rect x="2" y="7" width="11" height="5" rx="2.5" fill="#07172c"/>
+                                <ellipse cx="13" cy="9.5" rx="1.5" ry="2.2" fill="#38bdf8"/>
+                                <ellipse cx="0" cy="9.5" rx="3" ry="1.5" fill="rgba(56,189,248,0.85)"/>
+                                <!-- Tail Fin with Gambian Stripes -->
+                                <path d="M -23,-2 L -31,-16 L -20,-16 L -13,-2 Z" fill="#0c1c8c"/>
+                                <path d="M -29,-13 L -21,-13" stroke="#ce1126" stroke-width="2"/>
+                                <path d="M -26,-7 L -17,-7" stroke="#3a7728" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text & Percentage (Properly Aligned, Bold, Bigger) -->
+                <div class="flex items-center justify-between w-full px-1 text-slate-200">
+                    <span id="loader-status" class="text-sm sm:text-base font-bold text-sky-300 tracking-wide">
+                        Connecting to Clearance Gateway...
+                    </span>
+                    <span id="loader-percent" class="text-base sm:text-lg font-black font-mono text-white tracking-wider">
+                        0%
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- TOP NAVIGATION (Public Traveller Portal - No Staff Button)             -->
+    <!-- ====================================================================== -->
+    <header class="bg-[#0b2545] text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <!-- Brand Logo with Provided Official Coat of Arms -->
+            <a href="../index.html" class="flex items-center space-x-3 text-white">
+                <img src="../assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-10 h-10 object-contain drop-shadow">
+                <div>
+                    <div class="text-xs sm:text-sm font-bold leading-tight">Ministry of Health</div>
+                    <div class="text-[11px] sm:text-xs text-slate-300 font-medium">The Gambia</div>
+                </div>
+            </a>
+
+            <!-- Center Subtitle (Desktop only) -->
+            <div class="hidden lg:flex flex-col items-center text-center">
+                <span class="text-sm font-bold tracking-tight">Ebola Traveller Screening System</span>
+                <span class="text-[11px] text-slate-300 font-medium">Protecting Our People, Preventing the Spread</span>
+            </div>
+
+            <!-- Desktop Nav Links: Help, Health Guidelines, More -->
+            <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold">
+                <a href="#declaration" class="text-white hover:text-blue-300 transition flex items-center">
+                    <i class="fa-solid fa-clipboard-check mr-1.5 text-blue-400"></i> Declaration
+                </a>
+                <a href="javascript:void(0)" onclick="openHelpModal('guidelines')" class="text-slate-200 hover:text-white transition flex items-center">
+                    <i class="fa-solid fa-book-medical mr-1.5 text-emerald-400"></i> Health Guidelines
+                </a>
+                <a href="javascript:void(0)" onclick="openHelpModal('help')" class="text-slate-200 hover:text-white transition flex items-center">
+                    <i class="fa-solid fa-circle-question mr-1.5 text-amber-400"></i> Help & FAQ
+                </a>
+                <div class="flex items-center text-xs font-semibold text-slate-200 border border-slate-600 rounded-md px-2.5 py-1 bg-slate-800/60 cursor-pointer">
+                    <i class="fa-solid fa-globe mr-1.5 text-slate-400"></i> EN <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                </div>
+            </nav>
+
+            <!-- Mobile Hamburger Toggle Button -->
+            <div class="md:hidden flex items-center">
+                <button type="button" id="mobile-menu-toggle" class="text-white p-2 rounded-lg hover:bg-slate-800 focus:outline-none" aria-label="Toggle navigation menu">
+                    <i class="fa-solid fa-bars text-xl" id="hamburger-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Collapsible Menu Dropdown -->
+        <div id="mobile-menu-dropdown" class="hidden md:hidden bg-[#07172c] border-t border-slate-800 px-4 py-4 space-y-3 text-xs font-medium">
+            <a href="#declaration" onclick="toggleMobileMenu()" class="block text-white hover:text-blue-300 py-1.5 flex items-center">
+                <i class="fa-solid fa-clipboard-check mr-2 text-blue-400 w-4"></i> Complete Declaration Form
+            </a>
+            <a href="javascript:void(0)" onclick="openHelpModal('guidelines'); toggleMobileMenu();" class="block text-slate-200 hover:text-white py-1.5 flex items-center">
+                <i class="fa-solid fa-book-medical mr-2 text-emerald-400 w-4"></i> Ebola Health Guidelines
+            </a>
+            <a href="javascript:void(0)" onclick="openHelpModal('help'); toggleMobileMenu();" class="block text-slate-200 hover:text-white py-1.5 flex items-center">
+                <i class="fa-solid fa-circle-question mr-2 text-amber-400 w-4"></i> Help & Assistance (FAQ)
+            </a>
+            <div class="pt-2 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+                <span>MoH Emergency Hotline: <strong class="text-red-400">1025</strong></span>
+                <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">English (EN)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ====================================================================== -->
+    <!-- MAIN CONTAINER                                                         -->
+    <!-- ====================================================================== -->
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 py-6 flex-1 w-full space-y-6">
+
+        <!-- ================================================================== -->
+        <!-- HERO BANNER CARD WITH LANDING PLANE SKY BACKGROUND                -->
+        <!-- ================================================================== -->
+        <div class="relative rounded-2xl border border-sky-200/80 shadow-md p-4 sm:p-7 overflow-hidden flex flex-col justify-center min-h-[170px] sm:min-h-[200px] bg-cover bg-no-repeat bg-[center_right]" style="background-image: url('../assets/images/airplane-landing-sky.jpg');">
+            
+            <!-- Soft gradient vignette overlay ensuring text contrast on left while keeping plane vibrant on right -->
+            <div class="absolute inset-0 bg-gradient-to-r from-white/95 via-sky-50/80 to-transparent pointer-events-none"></div>
+
+            <!-- Floating Traveller Health Declaration Form Card -->
+            <div class="relative z-10 max-w-md sm:max-w-lg bg-[#eef4fc]/95 backdrop-blur-sm rounded-2xl border border-[#d6e4f7] shadow-sm p-4 sm:p-5">
+                <h2 class="text-base sm:text-lg font-bold text-[#0b2545] mb-1 flex items-center">
+                    <i class="fa-solid fa-file-shield text-[#0066cc] mr-2 text-base"></i> Traveller Health Declaration Form
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    Please complete this form with accurate information to help us assess your risk of Ebola exposure.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- ================================================================== -->
+        <!-- STEPPER PROGRESS BAR (7 Desktop Steps / 4 Mobile Steps)            -->
+        <!-- ================================================================== -->
+        <div class="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-sm">
+            <!-- Desktop 7 Steps -->
+            <div class="hidden sm:flex items-center justify-between relative">
+                <div class="absolute top-4 left-6 right-6 h-[2px] bg-slate-200 -z-0"></div>
+
+                <div class="step-item text-center">
+                    <div id="step-dot-1" class="step-circle active z-10">1</div>
+                    <span class="text-[11px] font-semibold text-slate-800 mt-1.5 block">Personal<br>Information</span>
+                </div>
+                <div class="step-item text-center">
+                    <div id="step-dot-2" class="step-circle inactive z-10">2</div>
+                    <span class="text-[11px] font-medium text-slate-500 mt-1.5 block">Travel<br>Itinerary</span>
+                </div>
+                <div class="step-item text-center">
+                    <div id="step-dot-3" class="step-circle inactive z-10">3</div>
+                    <span class="text-[11px] font-medium text-slate-500 mt-1.5 block">Exposure to<br>Ebola Cases</span>
+                </div>
+                <div class="step-item text-center">
+                    <div id="step-dot-4" class="step-circle inactive z-10">4</div>
+                    <span class="text-[11px] font-medium text-slate-500 mt-1.5 block">Healthcare<br>Exposure</span>
+                </div>
+                <div class="step-item text-center">
+                    <div id="step-dot-5" class="step-circle inactive z-10">5</div>
+                    <span class="text-[11px] font-medium text-slate-500 mt-1.5 block">Animal &<br>Environmental</span>
+                </div>
+                <div class="step-item text-center">
+                    <div id="step-dot-6" class="step-circle inactive z-10">6</div>
+                    <span class="text-[11px] font-medium text-slate-500 mt-1.5 block">Health<br>Condition</span>
+                </div>
+                <div class="step-item text-center">
+                    <div id="step-dot-7" class="step-circle inactive z-10">7</div>
+                    <span class="text-[11px] font-medium text-slate-500 mt-1.5 block">Exposure<br>Timeline</span>
+                </div>
+            </div>
+
+            <!-- Mobile 4 Steps -->
+            <div class="flex sm:hidden items-center justify-between relative px-2">
+                <div class="absolute top-3.5 left-4 right-4 h-[2px] bg-slate-200 -z-0"></div>
+                <div class="step-item">
+                    <div id="m-step-dot-1" class="step-circle active z-10">1</div>
+                    <span class="text-[10px] font-bold text-[#0066cc] mt-1">Personal Info</span>
+                </div>
+                <div class="step-item">
+                    <div id="m-step-dot-2" class="step-circle inactive z-10">2</div>
+                    <span class="text-[10px] text-slate-400 mt-1">Itinerary</span>
+                </div>
+                <div class="step-item">
+                    <div id="m-step-dot-3" class="step-circle inactive z-10">3</div>
+                    <span class="text-[10px] text-slate-400 mt-1">Exposure</span>
+                </div>
+                <div class="step-item">
+                    <div id="m-step-dot-4" class="step-circle inactive z-10">4</div>
+                    <span class="text-[10px] text-slate-400 mt-1">Health</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Step Validation Warning Banner -->
+        <div id="validation-error-banner" class="hidden p-3.5 rounded-xl bg-red-50 border border-red-300 text-red-800 text-xs font-semibold flex items-center justify-between shadow-sm">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-circle-exclamation text-red-600 text-base"></i>
+                <span id="validation-error-text">Please complete all required fields marked with an asterisk (*) before proceeding.</span>
+            </div>
+            <button type="button" onclick="this.parentElement.classList.add('hidden')" class="text-red-600 text-base leading-none">&times;</button>
+        </div>
+
+        <!-- ================================================================== -->
+        <!-- FORM CONTAINER                                                     -->
+        <!-- ================================================================== -->
+        <form id="ebola-declaration-form" class="space-y-6" novalidate>
+
+            <!-- ============================================================== -->
+            <!-- SECTION 1: TRAVELLER'S PERSONAL INFORMATION                    -->
+            <!-- ============================================================== -->
+            <div id="section-1" class="section-card bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+                <div class="navy-section-header">
+                    <i class="fa-solid fa-user mr-2 text-sm text-slate-300"></i> 1. Traveller's Personal Information
+                </div>
+
+                <div class="p-4 sm:p-6 space-y-4">
+                    <!-- Row 1: Full Name, Date of Birth, Nationality -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name *</label>
+                            <input type="text" id="full_name" required placeholder="Fatoumatta Jaiteh" value="Fatoumatta Jaiteh" class="form-input-styled">
+                            <span class="field-error-msg hidden text-[11px] text-red-600 font-medium mt-1">Full name is required.</span>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Date of Birth *</label>
+                            <input type="date" id="date_of_birth" required value="2000-04-15" class="form-input-styled">
+                            <span class="field-error-msg hidden text-[11px] text-red-600 font-medium mt-1">Date of birth is required.</span>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Nationality *</label>
+                            <select id="nationality" required class="form-input-styled">
+                                <option value="Gambia" selected>Gambia</option>
+                                <option value="Senegal">Senegal</option>
+                                <option value="Guinea">Guinea</option>
+                                <option value="Sierra Leone">Sierra Leone</option>
+                                <option value="Liberia">Liberia</option>
+                                <option value="Uganda">Uganda</option>
+                                <option value="DR Congo">DR Congo</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Sex, Age, Flight Number -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Sex *</label>
+                            <div class="flex items-center space-x-4 pt-1 sm:pt-2">
+                                <label class="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
+                                    <input type="radio" name="sex" value="female" checked class="w-4 h-4 text-[#0066cc]">
+                                    <span class="ml-1.5">Female</span>
+                                </label>
+                                <label class="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
+                                    <input type="radio" name="sex" value="male" class="w-4 h-4 text-[#0066cc]">
+                                    <span class="ml-1.5">Male</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Age *</label>
+                            <input type="text" id="age_calc" readonly value="25" class="form-input-styled bg-slate-50 font-semibold text-slate-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Flight Number *</label>
+                            <input type="text" id="flight_number" required placeholder="QR742" value="QR742" class="form-input-styled">
+                            <span class="field-error-msg hidden text-[11px] text-red-600 font-medium mt-1">Flight number is required.</span>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Phone Number, Email Address, Passport Number -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Phone Number *</label>
+                            <input type="tel" id="phone_number" required placeholder="+220 9376543" value="+220 9376543" class="form-input-styled">
+                            <span class="field-error-msg hidden text-[11px] text-red-600 font-medium mt-1">Active phone number is required.</span>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
+                            <input type="email" id="email" placeholder="fatoumatta@email.com" value="fatoumatta@email.com" class="form-input-styled">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Passport Number</label>
+                            <input type="text" id="passport_number" placeholder="BJL1234567" value="BJL1234567" class="form-input-styled">
+                        </div>
+                    </div>
+
+                    <!-- Address in Gambia -->
+                    <div class="pt-2">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Intended Address / Hotel in The Gambia *</label>
+                        <input type="text" id="address_in_gambia" required placeholder="e.g. Senegambia Beach Hotel, Kololi / Fajara M Section" value="Senegambia Beach Hotel, Kololi" class="form-input-styled">
+                        <span class="field-error-msg hidden text-[11px] text-red-600 font-medium mt-1">Intended stay address in The Gambia is required.</span>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                    <button type="button" onclick="validateAndGoToStep(1, 2)" class="px-5 py-2.5 bg-[#0066cc] hover:bg-[#0052a3] text-white font-semibold text-xs sm:text-sm rounded-md shadow-sm transition flex items-center">
+                        Next: Travel Itinerary <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- SECTION 2: TRAVELLER ITINERARY & COUNTRY HISTORY (21-DAY)       -->
+            <!-- ============================================================== -->
+            <div id="section-2" class="section-card hidden bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+                <div class="navy-section-header">
+                    <i class="fa-solid fa-plane-departure mr-2 text-sm text-slate-300"></i> 2. Traveller Itinerary and Country History
+                </div>
+
+                <div class="p-4 sm:p-6 space-y-4">
+                    <!-- Row 1: Departure Date, Countries Visited, Entry Date -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Date of Departure from Country of Residence *</label>
+                            <input type="date" id="dept_residence" required value="2025-10-01" class="form-input-styled">
+                            <span class="field-error-msg hidden text-[11px] text-red-600 font-medium mt-1">Departure date is required.</span>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Countries Visited in the Last 21 Days *</label>
+                            <div class="form-input-styled flex flex-wrap items-center gap-1.5 p-1.5 min-h-[38px] bg-white cursor-pointer relative" id="country-tag-container">
+                                <span class="country-chip">Guinea <span class="remove-chip" onclick="removeChip(this)">&times;</span></span>
+                                <span class="country-chip">Sierra Leone <span class="remove-chip" onclick="removeChip(this)">&times;</span></span>
+                                <input type="text" id="chip-input" placeholder="Add country & press enter..." class="border-none outline-none text-xs flex-1 min-w-[50px] bg-transparent">
+                                <i class="fa-solid fa-chevron-down text-slate-400 text-xs ml-auto pr-1"></i>
+                            </div>
+                            <span class="field-error-msg hidden text-[11px] text-red-600 font-medium mt-1" id="country-chip-error">At least one country visited must be entered.</span>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Date of Entry into Each Country *</label>
+                            <input type="date" id="entry_date" required value="2025-10-02" class="form-input-styled">
+                            <span class="field-error-msg hidden text-[11px] text-red-600 font-medium mt-1">Entry date is required.</span>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Departure Date, City/District, Duration of Stay -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Date of Departure from Each Country *</label>
+                            <input type="date" id="departure_date" required value="2025-10-05" class="form-input-styled">
+                            <span class="field-error-msg hidden text-[11px] text-red-600 font-medium mt-1">Departure date is required.</span>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">City, Region or District Visited *</label>
+                            <input type="text" id="city_visited" required value="Conakry" class="form-input-styled">
+                            <span class="field-error-msg hidden text-[11px] text-red-600 font-medium mt-1">City or region is required.</span>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Duration of Stay (Days) *</label>
+                            <input type="number" id="duration_stay" value="3" readonly class="form-input-styled bg-slate-50 text-slate-600 font-semibold">
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Purpose of Visit, Transit, Airport/Border -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Purpose of Visit *</label>
+                            <select id="purpose_visit" required class="form-input-styled">
+                                <option value="Tourism" selected>Tourism</option>
+                                <option value="Business">Business</option>
+                                <option value="Employment">Employment</option>
+                                <option value="Family visit">Family visit</option>
+                                <option value="Medical treatment">Medical treatment</option>
+                                <option value="Humanitarian work">Humanitarian work</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Did you transit through another country?</label>
+                            <div class="flex items-center space-x-4 pt-1 sm:pt-2">
+                                <label class="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
+                                    <input type="radio" name="transit" value="yes" checked class="w-4 h-4 text-[#0066cc]">
+                                    <span class="ml-1.5">Yes</span>
+                                </label>
+                                <label class="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
+                                    <input type="radio" name="transit" value="no" class="w-4 h-4 text-[#0066cc]">
+                                    <span class="ml-1.5">No</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Airport or Border Crossing Used</label>
+                            <input type="text" id="airport_border" value="Conakry Airport" class="form-input-styled">
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Leave transit?, Accommodation, Stay with local residents? -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Did you leave the transit airport?</label>
+                            <div class="flex items-center space-x-4 pt-1 sm:pt-2">
+                                <label class="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
+                                    <input type="radio" name="leave_transit" value="yes" class="w-4 h-4 text-[#0066cc]">
+                                    <span class="ml-1.5">Yes</span>
+                                </label>
+                                <label class="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
+                                    <input type="radio" name="leave_transit" value="no" checked class="w-4 h-4 text-[#0066cc]">
+                                    <span class="ml-1.5">No</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Accommodation Type *</label>
+                            <select id="accommodation_type" required class="form-input-styled">
+                                <option value="Hotel" selected>Hotel</option>
+                                <option value="Private Residence">Private Residence</option>
+                                <option value="Guesthouse">Guesthouse</option>
+                                <option value="Healthcare Facility">Healthcare Facility</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Did you stay with local residents?</label>
+                            <div class="flex items-center space-x-4 pt-1 sm:pt-2">
+                                <label class="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
+                                    <input type="radio" name="stay_local" value="yes" checked class="w-4 h-4 text-[#0066cc]">
+                                    <span class="ml-1.5">Yes</span>
+                                </label>
+                                <label class="inline-flex items-center text-xs font-medium text-slate-700 cursor-pointer">
+                                    <input type="radio" name="stay_local" value="no" class="w-4 h-4 text-[#0066cc]">
+                                    <span class="ml-1.5">No</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-between">
+                    <button type="button" onclick="goToStep(1)" class="px-5 py-2.5 border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold text-xs sm:text-sm rounded-md transition">
+                        &larr; Previous
+                    </button>
+                    <button type="button" onclick="validateAndGoToStep(2, 3)" class="px-6 py-2.5 bg-[#0066cc] hover:bg-[#0052a3] text-white font-semibold text-xs sm:text-sm rounded-md shadow-sm transition">
+                        Next: Exposure &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- SECTION 3: EXPOSURE TO EBOLA CASES                             -->
+            <!-- ============================================================== -->
+            <div id="section-3" class="section-card hidden bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+                <div class="navy-section-header">
+                    <i class="fa-solid fa-triangle-exclamation mr-2 text-sm text-amber-400"></i> 3. Exposure to Suspected or Confirmed Ebola Cases
+                </div>
+
+                <div class="p-4 sm:p-6 space-y-4">
+                    <p class="text-xs text-slate-500 mb-4">Please answer each question carefully based on the past 21 days * (All questions require an answer):</p>
+                    <div class="space-y-3" id="exposure-questions-list"></div>
+                </div>
+
+                <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-between">
+                    <button type="button" onclick="goToStep(2)" class="px-5 py-2.5 border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold text-xs sm:text-sm rounded-md transition">
+                        &larr; Previous
+                    </button>
+                    <button type="button" onclick="validateAndGoToStep(3, 4)" class="px-6 py-2.5 bg-[#0066cc] hover:bg-[#0052a3] text-white font-semibold text-xs sm:text-sm rounded-md shadow-sm transition">
+                        Next: Healthcare &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- SECTION 4: HEALTHCARE & OCCUPATIONAL EXPOSURE                   -->
+            <!-- ============================================================== -->
+            <div id="section-4" class="section-card hidden bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+                <div class="navy-section-header">
+                    <i class="fa-solid fa-hospital mr-2 text-sm text-slate-300"></i> 4. Healthcare Facility & Occupational Exposure
+                </div>
+
+                <div class="p-4 sm:p-6 space-y-4" id="healthcare-questions-list"></div>
+
+                <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-between">
+                    <button type="button" onclick="goToStep(3)" class="px-5 py-2.5 border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold text-xs sm:text-sm rounded-md transition">
+                        &larr; Previous
+                    </button>
+                    <button type="button" onclick="validateAndGoToStep(4, 5)" class="px-6 py-2.5 bg-[#0066cc] hover:bg-[#0052a3] text-white font-semibold text-xs sm:text-sm rounded-md shadow-sm transition">
+                        Next: Wildlife &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- SECTION 5: ANIMAL & ENVIRONMENTAL EXPOSURE                     -->
+            <!-- ============================================================== -->
+            <div id="section-5" class="section-card hidden bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+                <div class="navy-section-header">
+                    <i class="fa-solid fa-tree mr-2 text-sm text-slate-300"></i> 5. Animal & Environmental Exposure
+                </div>
+
+                <div class="p-4 sm:p-6 space-y-4" id="animal-questions-list"></div>
+
+                <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-between">
+                    <button type="button" onclick="goToStep(4)" class="px-5 py-2.5 border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold text-xs sm:text-sm rounded-md transition">
+                        &larr; Previous
+                    </button>
+                    <button type="button" onclick="validateAndGoToStep(5, 6)" class="px-6 py-2.5 bg-[#0066cc] hover:bg-[#0052a3] text-white font-semibold text-xs sm:text-sm rounded-md shadow-sm transition">
+                        Next: Health Condition &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- SECTION 6: CURRENT HEALTH CONDITION & SYMPTOMS                  -->
+            <!-- ============================================================== -->
+            <div id="section-6" class="section-card hidden bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+                <div class="navy-section-header">
+                    <i class="fa-solid fa-heart-pulse mr-2 text-sm text-rose-400"></i> 6. Health Condition & Symptoms
+                </div>
+
+                <div class="p-4 sm:p-6 space-y-4">
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">Check any symptoms you currently have or experienced in the past 48 hours:</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="symptoms-grid"></div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-200">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Body Temperature (°C) *</label>
+                            <input type="number" step="0.1" id="body_temp" required placeholder="e.g. 36.8" value="36.8" class="form-input-styled">
+                            <span class="field-error-msg hidden text-[11px] text-red-600 font-medium mt-1">Body temperature measurement is required.</span>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Have you undergone Ebola testing? *</label>
+                            <select id="ebola_tested" required class="form-input-styled">
+                                <option value="No" selected>No</option>
+                                <option value="Yes">Yes (Negative result)</option>
+                                <option value="Pending">Pending results</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-between">
+                    <button type="button" onclick="goToStep(5)" class="px-5 py-2.5 border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold text-xs sm:text-sm rounded-md transition">
+                        &larr; Previous
+                    </button>
+                    <button type="button" onclick="validateAndGoToStep(6, 7)" class="px-6 py-2.5 bg-[#0066cc] hover:bg-[#0052a3] text-white font-semibold text-xs sm:text-sm rounded-md shadow-sm transition">
+                        Next: Review & Submit &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- SECTION 7: EXPOSURE TIMELINE & SUBMISSION REVIEW               -->
+            <!-- ============================================================== -->
+            <div id="section-7" class="section-card hidden bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+                <div class="navy-section-header">
+                    <i class="fa-solid fa-clock-rotate-left mr-2 text-sm text-slate-300"></i> 7. Exposure Timeline & Submission
+                </div>
+
+                <div class="p-4 sm:p-6 space-y-4">
+                    <div class="p-4 rounded-lg bg-blue-50/70 border border-blue-200 text-xs text-blue-900 leading-relaxed">
+                        <strong class="font-bold text-blue-950 block mb-1">Observation Period Notice:</strong>
+                        The 21-day Ebola observation period is monitored from your last possible date of travel or exposure.
+                    </div>
+
+                    <div class="p-4 rounded-lg border border-slate-200 bg-slate-50 space-y-2 text-xs">
+                        <div><strong class="text-slate-600">Passenger:</strong> <span id="rev-name" class="font-bold text-slate-900">Fatoumatta Jaiteh</span></div>
+                        <div><strong class="text-slate-600">Nationality:</strong> <span id="rev-nat" class="text-slate-800">Gambia</span></div>
+                        <div><strong class="text-slate-600">Flight Number:</strong> <span id="rev-flight" class="font-mono font-bold text-slate-800">QR742</span></div>
+                        <div><strong class="text-slate-600">Recent Travel:</strong> <span id="rev-travel" class="text-slate-800">Guinea, Sierra Leone</span></div>
+                    </div>
+
+                    <div class="pt-2">
+                        <label class="flex items-start cursor-pointer">
+                            <input type="checkbox" id="truth_cert" required checked class="w-4 h-4 text-[#0066cc] rounded border-slate-300 mt-0.5">
+                            <span class="ml-2 text-xs text-slate-700">
+                                I solemnly declare that all statements made in this health declaration are true, accurate, and complete. *
+                            </span>
+                        </label>
+                        <span class="field-error-msg hidden text-[11px] text-red-600 font-medium mt-1" id="truth-cert-error">You must accept the truthfulness certification to generate your pass.</span>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-between">
+                    <button type="button" onclick="goToStep(6)" class="px-5 py-2.5 border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold text-xs sm:text-sm rounded-md transition">
+                        &larr; Previous
+                    </button>
+                    <button type="submit" id="submit-btn" class="px-8 py-3 bg-[#0066cc] hover:bg-[#0052a3] text-white font-bold text-xs sm:text-sm rounded-md shadow-md transition flex items-center">
+                        <i class="fa-solid fa-qrcode mr-2"></i> Submit Declaration & Get QR Pass
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+    </main>
+
+    <!-- ====================================================================== -->
+    <!-- HELP & GUIDELINES MODAL                                                -->
+    <!-- ====================================================================== -->
+    <div id="help-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-slate-200">
+            <div class="navy-section-header justify-between">
+                <span id="help-modal-title">Public Health Information</span>
+                <button onclick="closeHelpModal()" class="text-white text-base font-bold">&times;</button>
+            </div>
+            <div class="p-6 space-y-4 text-xs text-slate-700 leading-relaxed" id="help-modal-body">
+                <!-- Dynamically populated -->
+            </div>
+            <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                <button onclick="closeHelpModal()" class="px-4 py-2 bg-[#0066cc] text-white text-xs font-semibold rounded-md">
+                    Understood
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- FOOTER WITH OFFICIAL EMBLEM & EBOLA FREE GAMBIA                        -->
+    <!-- ====================================================================== -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center space-x-2">
+                <img src="../assets/images/gambia-logo.png" alt="Logo" class="w-6 h-6 object-contain">
+                <span>&copy; 2025 Ministry of Health, The Gambia. All rights reserved.</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span>Emergency Hotline: <strong class="text-red-600 font-bold">1025</strong></span>
+                <span class="inline-flex items-center text-xs font-semibold text-emerald-700">
+                    <i class="fa-solid fa-shield-check mr-1.5 text-emerald-600"></i> Ebola Free Gambia
+                </span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../assets/js/loader.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script>
+        let currentStep = 1;
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu-dropdown');
+            const icon = document.getElementById('hamburger-icon');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                icon.className = 'fa-solid fa-xmark text-xl';
+            } else {
+                menu.classList.add('hidden');
+                icon.className = 'fa-solid fa-bars text-xl';
+            }
+        }
+        document.getElementById('mobile-menu-toggle').addEventListener('click', toggleMobileMenu);
+
+        // Help Modal Content
+        function openHelpModal(type) {
+            const modal = document.getElementById('help-modal');
+            const title = document.getElementById('help-modal-title');
+            const body = document.getElementById('help-modal-body');
+
+            if (type === 'guidelines') {
+                title.textContent = 'Ebola Virus Disease (EVD) Health Guidelines';
+                body.innerHTML = `
+                    <div class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-900 font-medium">
+                        <strong>Public Health Advisory:</strong> Ebola is a severe viral disease. Symptoms typically appear within 2 to 21 days following exposure.
+                    </div>
+                    <div>
+                        <strong class="block text-slate-900 mb-1">Key Symptoms to Monitor:</strong>
+                        <ul class="list-disc list-inside space-y-1 text-slate-600">
+                            <li>Sudden high fever (> 38.0°C)</li>
+                            <li>Unexplained bleeding, bruising, or petechiae</li>
+                            <li>Persistent vomiting or acute watery diarrhea</li>
+                            <li>Severe headache and muscle aches</li>
+                        </ul>
+                    </div>
+                    <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-900">
+                        <strong>Upon Arrival at Banjul (BJL):</strong> Present your generated QR pass to the Ministry of Health port health screening officers before immigration control.
+                    </div>
+                `;
+            } else {
+                title.textContent = 'Screening System Help & FAQ';
+                body.innerHTML = `
+                    <div>
+                        <strong class="block text-slate-900 mb-1">Why do I need to complete this declaration?</strong>
+                        <p class="text-slate-600">Under Gambian public health regulations, all arriving passengers must declare their 21-day itinerary and health condition to prevent cross-border transmission of infectious diseases.</p>
+                    </div>
+                    <div>
+                        <strong class="block text-slate-900 mb-1">Can I save my QR code?</strong>
+                        <p class="text-slate-600">Yes! Once submitted, you can click "Save to Photos" to download the high-resolution pass or take a screenshot on your mobile phone.</p>
+                    </div>
+                    <div>
+                        <strong class="block text-slate-900 mb-1">Need Urgent Assistance?</strong>
+                        <p class="text-slate-600">Call the Ministry of Health National Emergency Toll-Free Line at <strong>1025</strong>.</p>
+                    </div>
+                `;
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeHelpModal() {
+            document.getElementById('help-modal').classList.add('hidden');
+        }
+
+        // Auto Age Calculation
+        function updateAge() {
+            const dobVal = document.getElementById('date_of_birth').value;
+            if (!dobVal) return;
+            const dob = new Date(dobVal);
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const m = today.getMonth() - dob.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+            document.getElementById('age_calc').value = age > 0 ? age : 0;
+        }
+        document.getElementById('date_of_birth').addEventListener('change', updateAge);
+
+        // Auto Duration of Stay
+        function updateDuration() {
+            const entryVal = document.getElementById('entry_date').value;
+            const deptVal = document.getElementById('departure_date').value;
+            if (entryVal && deptVal) {
+                const diffTime = Math.abs(new Date(deptVal) - new Date(entryVal));
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                document.getElementById('duration_stay').value = diffDays || 1;
+            }
+        }
+        document.getElementById('entry_date').addEventListener('change', updateDuration);
+        document.getElementById('departure_date').addEventListener('change', updateDuration);
+
+        // Country Tag Chips
+        function removeChip(el) {
+            el.parentElement.remove();
+        }
+
+        document.getElementById('chip-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                e.preventDefault();
+                const container = document.getElementById('country-tag-container');
+                const chip = document.createElement('span');
+                chip.className = 'country-chip';
+                chip.innerHTML = `${this.value.trim()} <span class="remove-chip" onclick="removeChip(this)">&times;</span>`;
+                container.insertBefore(chip, this);
+                this.value = '';
+                document.getElementById('country-chip-error').classList.add('hidden');
+            }
+        });
+
+        // ----------------------------------------------------------------------
+        // STRICT FORM VALIDATION FOR REQUIRED FIELDS (*)
+        // ----------------------------------------------------------------------
+        function validateStep(step) {
+            let valid = true;
+            const banner = document.getElementById('validation-error-banner');
+            banner.classList.add('hidden');
+
+            // Reset error highlights in this section
+            const section = document.getElementById(`section-${step}`);
+            section.querySelectorAll('.form-input-styled').forEach(input => {
+                input.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+            });
+            section.querySelectorAll('.field-error-msg').forEach(msg => msg.classList.add('hidden'));
+
+            if (step === 1) {
+                // Check Section 1 Required Fields
+                const requiredFields = ['full_name', 'date_of_birth', 'flight_number', 'phone_number', 'address_in_gambia'];
+                requiredFields.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (!el.value.trim()) {
+                        valid = false;
+                        el.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+                        const err = el.parentElement.querySelector('.field-error-msg');
+                        if (err) err.classList.remove('hidden');
+                    }
+                });
+            } else if (step === 2) {
+                // Check Section 2 Required Fields
+                const requiredFields = ['dept_residence', 'entry_date', 'departure_date', 'city_visited'];
+                requiredFields.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (!el.value.trim()) {
+                        valid = false;
+                        el.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+                        const err = el.parentElement.querySelector('.field-error-msg');
+                        if (err) err.classList.remove('hidden');
+                    }
+                });
+
+                // Check at least one country chip
+                const chips = document.querySelectorAll('.country-chip');
+                if (chips.length === 0 && !document.getElementById('chip-input').value.trim()) {
+                    valid = false;
+                    document.getElementById('country-chip-error').classList.remove('hidden');
+                }
+            } else if (step === 3) {
+                // Check all exposure radio questions have a selection
+                EXPOSURES.forEach(q => {
+                    const checked = document.querySelector(`input[name="exp_${q.key}"]:checked`);
+                    if (!checked) valid = false;
+                });
+            } else if (step === 6) {
+                // Check temperature
+                const tempEl = document.getElementById('body_temp');
+                if (!tempEl.value || parseFloat(tempEl.value) <= 0) {
+                    valid = false;
+                    tempEl.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+                }
+            }
+
+            if (!valid) {
+                banner.classList.remove('hidden');
+                // Scroll to top of section
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            return valid;
+        }
+
+        function validateAndGoToStep(fromStep, toStep) {
+            if (validateStep(fromStep)) {
+                goToStep(toStep);
+            }
+        }
+
+        // Stepper Transition
+        function goToStep(step) {
+            if (step === 7) {
+                document.getElementById('rev-name').textContent = document.getElementById('full_name').value;
+                document.getElementById('rev-nat').textContent = document.getElementById('nationality').value;
+                document.getElementById('rev-flight').textContent = document.getElementById('flight_number').value;
+                const chips = Array.from(document.querySelectorAll('.country-chip')).map(c => c.textContent.replace('×', '').trim());
+                document.getElementById('rev-travel').textContent = chips.join(', ') || 'N/A';
+            }
+
+            document.querySelectorAll('.section-card').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById(`section-${step}`);
+            if (target) target.classList.remove('hidden');
+
+            // Desktop Stepper dots
+            for (let i = 1; i <= 7; i++) {
+                const dot = document.getElementById(`step-dot-${i}`);
+                if (dot) dot.className = i <= step ? 'step-circle active z-10' : 'step-circle inactive z-10';
+            }
+
+            // Mobile Stepper dots
+            for (let i = 1; i <= 4; i++) {
+                const mDot = document.getElementById(`m-step-dot-${i}`);
+                if (mDot) {
+                    const mapped = i === 1 ? 1 : (i === 2 ? 2 : (i === 3 ? 3 : 6));
+                    mDot.className = step >= mapped ? 'step-circle active z-10' : 'step-circle inactive z-10';
+                }
+            }
+
+            currentStep = step;
+            window.scrollTo({ top: 120, behavior: 'smooth' });
+        }
+
+        // Question Datasets
+        const EXPOSURES = [
+            { key: "direct_contact", label: "Direct physical contact with anyone diagnosed with Ebola" },
+            { key: "cared_for", label: "Cared for someone suspected or confirmed of having Ebola" },
+            { key: "touched_fluids", label: "Touched blood, vomit or bodily fluids of an Ebola patient" },
+            { key: "dead_body", label: "Exposed to or touched a dead body suspected of Ebola infection" },
+            { key: "funeral", label: "Attended a funeral involving someone suspected of having Ebola" }
+        ];
+
+        const HEALTHCARE = [
+            { key: "hospital_visit", label: "Visited a hospital or clinic in an outbreak-affected area?" },
+            { key: "treatment_center", label: "Worked in an Ebola treatment or isolation center?" },
+            { key: "needle_stick", label: "Experienced a needle-stick or sharp injury with potentially contaminated material?" }
+        ];
+
+        const ANIMALS = [
+            { key: "bats", label: "Handled bats or non-human primates in an affected area?" },
+            { key: "bushmeat", label: "Handled or consumed raw bushmeat?" },
+            { key: "caves", label: "Entered caves or mines inhabited by bats?" }
+        ];
+
+        const SYMPTOMS = [
+            "Sudden high fever (> 38.0°C)",
+            "Unexplained bleeding or unusual bruising",
+            "Severe headache",
+            "Intense muscle or joint pain",
+            "Persistent vomiting",
+            "Severe watery diarrhea",
+            "Abdominal pain",
+            "Extreme fatigue or weakness"
+        ];
+
+        function renderRadioRows(containerId, list, prefix) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = list.map(q => `
+                <div class="p-3 rounded-lg border border-slate-200 bg-slate-50/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <span class="font-medium text-slate-800">${q.label} *</span>
+                    <div class="flex items-center space-x-2 shrink-0">
+                        <label class="px-2.5 py-1 rounded border text-xs font-semibold cursor-pointer has-[:checked]:bg-[#0b2545] has-[:checked]:text-white border-slate-300 bg-white">
+                            <input type="radio" name="${prefix}_${q.key}" value="No" checked class="hidden"> No
+                        </label>
+                        <label class="px-2.5 py-1 rounded border text-xs font-semibold cursor-pointer has-[:checked]:bg-amber-600 has-[:checked]:text-white border-slate-300 bg-white">
+                            <input type="radio" name="${prefix}_${q.key}" value="Unsure" class="hidden"> Unsure
+                        </label>
+                        <label class="px-2.5 py-1 rounded border text-xs font-semibold cursor-pointer has-[:checked]:bg-red-600 has-[:checked]:text-white border-slate-300 bg-white">
+                            <input type="radio" name="${prefix}_${q.key}" value="Yes" class="hidden"> Yes
+                        </label>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderSymptoms() {
+            const grid = document.getElementById('symptoms-grid');
+            grid.innerHTML = SYMPTOMS.map((sym, idx) => `
+                <label class="flex items-center p-2.5 rounded-lg border border-slate-200 bg-slate-50/50 hover:bg-slate-100 cursor-pointer text-xs font-medium text-slate-700">
+                    <input type="checkbox" name="sym_${idx}" value="${sym}" class="w-4 h-4 text-[#0066cc] rounded border-slate-300">
+                    <span class="ml-2">${sym}</span>
+                </label>
+            `).join('');
+        }
+
+        // Form Submit
+        document.getElementById('ebola-declaration-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Validate truth certification checkbox
+            const truthChecked = document.getElementById('truth_cert').checked;
+            if (!truthChecked) {
+                document.getElementById('truth-cert-error').classList.remove('hidden');
+                return;
+            }
+
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Generating Pass...`;
+
+            try {
+                const countryChips = Array.from(document.querySelectorAll('.country-chip')).map(c => c.textContent.replace('×', '').trim());
+
+                const payload = {
+                    personal: {
+                        full_name: document.getElementById('full_name').value.trim(),
+                        date_of_birth: document.getElementById('date_of_birth').value,
+                        sex: document.querySelector('input[name="sex"]:checked')?.value || 'female',
+                        nationality: document.getElementById('nationality').value,
+                        residence_country: "The Gambia",
+                        passport_number: document.getElementById('passport_number').value.trim() || null,
+                        phone_number: document.getElementById('phone_number').value.trim(),
+                        email: document.getElementById('email').value.trim() || null,
+                        address_in_gambia: document.getElementById('address_in_gambia').value.trim(),
+                        flight_number: document.getElementById('flight_number').value.trim().toUpperCase(),
+                        arrival_airport: "Banjul International Airport (BJL)",
+                        arrival_date_time: new Date().toISOString()
+                    },
+                    itinerary: [
+                        {
+                            country_name: countryChips.join(', ') || 'Guinea',
+                            city_or_district: document.getElementById('city_visited').value.trim(),
+                            entry_date: document.getElementById('entry_date').value,
+                            departure_date: document.getElementById('departure_date').value,
+                            purpose_of_visit: document.getElementById('purpose_visit').value
+                        }
+                    ],
+                    exposures: EXPOSURES.map(q => ({
+                        question_key: q.key,
+                        question_label: q.label,
+                        answer: document.querySelector(`input[name="exp_${q.key}"]:checked`)?.value || 'No'
+                    })),
+                    healthcare: HEALTHCARE.map(q => ({
+                        event_type: q.label,
+                        answer: document.querySelector(`input[name="hc_${q.key}"]:checked`)?.value || 'No'
+                    })),
+                    environmental: ANIMALS.map(q => ({
+                        event_type: q.label,
+                        answer: document.querySelector(`input[name="env_${q.key}"]:checked`)?.value || 'No'
+                    })),
+                    symptoms: {
+                        symptoms_list: Array.from(document.querySelectorAll('#symptoms-grid input:checked')).map(cb => cb.value),
+                        body_temperature: parseFloat(document.getElementById('body_temp').value) || 36.8,
+                        ebola_tested: document.getElementById('ebola_tested').value
+                    },
+                    truthful_declaration: true
+                };
+
+                const confirmation = await OutbreakAPI.submitTravellerDeclaration(payload);
+                sessionStorage.setItem('screening_confirmation', JSON.stringify(confirmation));
+                window.location.href = 'confirmation.html';
+            } catch (err) {
+                console.error("Submission failed:", err);
+                alert("Submission error: " + err.message);
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-qrcode mr-2"></i> Submit Declaration & Get QR Pass`;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRadioRows('exposure-questions-list', EXPOSURES, 'exp');
+            renderRadioRows('healthcare-questions-list', HEALTHCARE, 'hc');
+            renderRadioRows('animal-questions-list', ANIMALS, 'env');
+            renderSymptoms();
+            updateAge();
+            updateDuration();
+        });
+    </script>
+</body>
+</html>
