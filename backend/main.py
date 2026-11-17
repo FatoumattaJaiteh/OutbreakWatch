@@ -59,6 +59,11 @@ def health_check():
 
 
 if __name__ == "__main__":
+    print("\n" + "=" * 60)
+    print("  OutbreakWatch Backend API is Starting...")
+    print("  Open in your browser:  http://localhost:8000")
+    print("  API Documentation:     http://localhost:8000/api/v1/docs")
+    print("=" * 60 + "\n")
     import uvicorn
     uvicorn.run("main:app", host=settings.HOST, port=settings.PORT, reload=settings.DEBUG)
 

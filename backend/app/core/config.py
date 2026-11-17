@@ -10,8 +10,8 @@ class Settings:
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
     
-    # Server settings
-    HOST: str = os.getenv("HOST", "0.0.0.0")
+    # Server settings (127.0.0.1 allows direct clicking in Windows Chrome)
+    HOST: str = os.getenv("HOST", "127.0.0.1")
     PORT: int = int(os.getenv("PORT", "8000"))
     DEBUG: bool = os.getenv("DEBUG", "True").lower() in ("true", "1", "t")
     
