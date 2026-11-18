@@ -2,14 +2,29 @@
  * OutbreakWatch & Ebola Screening System API Client
  * Ministry of Health, The Gambia
  */
+
+// Dynamically resolve base URL to match whether the frontend is loaded on localhost, 127.0.0.1, or a LAN IP
+function getInitialApiBase() {
+    if (typeof window !== 'undefined' && window.API_BASE_URL) {
+        return window.API_BASE_URL;
+    }
+    const host = (typeof window !== 'undefined' && window.location && window.location.hostname) 
+        ? window.location.hostname 
+        : '127.0.0.1';
+    
+    // Default to the same hostname that served the frontend
+    const targetHost = (host === 'localhost' || host === '127.0.0.1') ? host : '127.0.0.1';
+    return `http://${targetHost}:8000/api/v1`;
+}
+
 const API_CONFIG = {
-    BASE_URL: window.API_BASE_URL || 'http://localhost:8000/api/v1',
+    BASE_URL: getInitialApiBase(),
     TIMEOUT_MS: 15000
 };
 
 const OutbreakAPI = {
     async request(endpoint, options = {}) {
-        const url = `${API_CONFIG.BASE_URL}${endpoint}`;
+        let currentBase = API_CONFIG.BASE_URL;
         const token = this.getAuthToken();
         const headers = {
             'Content-Type': 'application/json',
@@ -17,21 +32,42 @@ const OutbreakAPI = {
             ...(options.headers || {})
         };
 
-        try {
+        const executeFetch = async (baseUrl) => {
+            const url = `${baseUrl}${endpoint}`;
             const response = await fetch(url, { ...options, headers });
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.detail || `Request failed with status ${response.status}`);
+                throw new Error(errorData.detail || `Server error: HTTP ${response.status}`);
             }
             return await response.json();
-        } catch (error) {
-            console.error(`API Error [${endpoint}]:`, error);
-            throw error;
+        };
+
+        try {
+            return await executeFetch(currentBase);
+        } catch (firstErr) {
+            // If connection failed (e.g. host mismatch between 127.0.0.1 and localhost), try the alternate address
+            if (currentBase.includes('127.0.0.1:8000') || currentBase.includes('localhost:8000')) {
+                const alternateBase = currentBase.includes('127.0.0.1:8000')
+                    ? currentBase.replace('127.0.0.1:8000', 'localhost:8000')
+                    : currentBase.replace('localhost:8000', '127.0.0.1:8000');
+                
+                try {
+                    const result = await executeFetch(alternateBase);
+                    // Cache the successful base URL for all future requests
+                    API_CONFIG.BASE_URL = alternateBase;
+                    window.API_BASE_URL = alternateBase;
+                    return result;
+                } catch (secondErr) {
+                    console.error(`API Connection failed on both interfaces for [${endpoint}]:`, firstErr, secondErr);
+                    throw new Error("Unable to connect to the OutbreakWatch backend. Please verify the Python API server is running (run: cd backend; python main.py).");
+                }
+            }
+            throw firstErr;
         }
     },
 
     // --------------------------------------------------------------------------
-    // AUTHENTICATION & ACCESS CONTROL (Section 4 & 14)
+    // AUTHENTICATION & ACCESS CONTROL
     // --------------------------------------------------------------------------
     async loginAdmin(email, password) {
         const res = await this.request('/auth/admin-login', {
@@ -58,18 +94,14 @@ const OutbreakAPI = {
     },
 
     getCurrentUser() {
-        const raw = localStorage.getItem('ebola_auth_user');
-        try {
-            return raw ? JSON.parse(raw) : null;
-        } catch {
-            return null;
-        }
+        const u = localStorage.getItem('ebola_auth_user');
+        return u ? JSON.parse(u) : null;
     },
 
-    logout(redirectPath = '../index.html') {
+    logout(redirectUrl = 'login.html') {
         localStorage.removeItem('ebola_auth_token');
         localStorage.removeItem('ebola_auth_user');
-        window.location.href = redirectPath;
+        window.location.href = redirectUrl;
     },
 
     async getRoles() {
@@ -151,8 +183,31 @@ const OutbreakAPI = {
         });
     },
 
+    // --------------------------------------------------------------------------
+    // OUTBREAK AREA MANAGEMENT & DYNAMIC RULES
+    // --------------------------------------------------------------------------
     async getOutbreakAreas() {
         return this.request('/admin/outbreak-areas');
+    },
+
+    async addOutbreakArea(payload) {
+        return this.request('/admin/outbreak-areas', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+    },
+
+    async updateOutbreakArea(areaId, payload) {
+        return this.request(`/admin/outbreak-areas/${encodeURIComponent(areaId)}`, {
+            method: 'PUT',
+            body: JSON.stringify(payload)
+        });
+    },
+
+    async deleteOutbreakArea(areaId) {
+        return this.request(`/admin/outbreak-areas/${encodeURIComponent(areaId)}`, {
+            method: 'DELETE'
+        });
     },
 
     async getOutbreaks(status = null) {

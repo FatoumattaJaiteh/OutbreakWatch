@@ -138,3 +138,46 @@ class OfficerAssessmentRequest(BaseModel):
     referral_notes: Optional[str] = None
     disposition: Optional[str] = "Cleared for entry"  # Cleared for entry, Secondary screening, Isolation referral, 21-day monitoring
 
+
+# ------------------------------------------------------------------------------
+# OUTBREAK AREA DEFINITIONS
+# ------------------------------------------------------------------------------
+class OutbreakAreaCreate(BaseModel):
+    disease_name: str = Field(..., min_length=2, description="Name of the infectious disease / outbreak")
+    country_code: str = Field(..., min_length=2, max_length=5, description="ISO-3 code, e.g. UGA, COD, RWA")
+    country_name: str = Field(..., min_length=2, description="Full country name")
+    affected_regions: List[str] = Field(default_factory=list, description="Districts or provinces affected")
+    status: str = Field("active", description="active, monitoring, resolved")
+    official_source: Optional[str] = "Ministry of Health / WHO Outbreak News"
+    guidance_notes: Optional[str] = None
+    valid_from: Optional[date] = None
+    valid_to: Optional[date] = None
+
+
+class OutbreakAreaResponse(BaseModel):
+    id: str
+    disease_name: str
+    country_code: str
+    country_name: str
+    affected_regions: List[str] = Field(default_factory=list)
+    status: str = "active"
+    official_source: Optional[str] = None
+    guidance_notes: Optional[str] = None
+    valid_from: Optional[date] = None
+    valid_to: Optional[date] = None
+    created_at: Optional[datetime] = None
+
+
+class OutbreakAreaUpdate(BaseModel):
+    disease_name: Optional[str] = None
+    country_code: Optional[str] = None
+    country_name: Optional[str] = None
+    affected_regions: Optional[List[str]] = None
+    status: Optional[str] = None
+    official_source: Optional[str] = None
+    guidance_notes: Optional[str] = None
+    valid_from: Optional[date] = None
+    valid_to: Optional[date] = None
+
+
+

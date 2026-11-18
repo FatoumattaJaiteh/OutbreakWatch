@@ -3,7 +3,9 @@ from fastapi import APIRouter, HTTPException, Query, status
 from app.schemas.screening import (
     TravellerDeclarationCreate,
     SubmissionConfirmation,
-    OfficerAssessmentRequest
+    OfficerAssessmentRequest,
+    OutbreakAreaCreate,
+    OutbreakAreaUpdate
 )
 from app.services.screening_service import ScreeningService
 
@@ -138,29 +140,56 @@ def revoke_qr_code(submission_id: str, reason: str = "Officer administrative rev
 
 
 # ------------------------------------------------------------------------------
-# CONFIGURATION & REFERENCE DATA
+# CONFIGURATION & OUTBREAK CORRIDORS
 # ------------------------------------------------------------------------------
-@router.get("/admin/outbreak-areas", summary="Configured Outbreak Areas")
+@router.get("/admin/outbreak-areas", summary="List Active Outbreak Corridors")
 def get_outbreak_areas():
-    """Returns list of currently active outbreak areas used by the rules engine."""
-    return [
-        {
-            "disease_name": "Ebola Virus Disease (Sudan Strain)",
-            "country_code": "UGA",
-            "country_name": "Uganda",
-            "affected_regions": ["Mubende", "Kassanda", "Kampala", "Kagadi"],
-            "status": "active",
-            "valid_from": "2026-01-01",
-            "guidance_notes": "Active outbreak surveillance for travellers arriving from Uganda or border transit corridors."
-        },
-        {
-            "disease_name": "Ebola Virus Disease (Zaire Strain)",
-            "country_code": "COD",
-            "country_name": "Democratic Republic of the Congo",
-            "affected_regions": ["North Kivu", "Ituri"],
-            "status": "active",
-            "valid_from": "2026-01-01",
-            "guidance_notes": "Vigilance for individuals with contact or healthcare exposure in Beni/Butembo."
-        }
-    ]
+    """Returns dynamic list of currently active outbreak areas used by the rules engine."""
+    return ScreeningService.list_outbreak_areas()
+
+
+@router.post("/admin/outbreak-areas", status_code=status.HTTP_201_CREATED, summary="Create New Outbreak Corridor")
+def create_outbreak_area(payload: OutbreakAreaCreate):
+    """
+    Super Admin Endpoint:
+    Registers a new active outbreak corridor (e.g. Sudan Ebola, Marburg, Mpox).
+    Updates database and immediately applies to traveller risk evaluation.
+    """
+    try:
+        return ScreeningService.create_outbreak_area(payload)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to register outbreak corridor: {str(e)}"
+        )
+
+
+@router.put("/admin/outbreak-areas/{area_id}", summary="Update Outbreak Corridor")
+def update_outbreak_area(area_id: str, payload: OutbreakAreaUpdate):
+    """
+    Super Admin Endpoint:
+    Updates outbreak corridor details, toggle active/paused status, or updates surveillance guidance.
+    """
+    try:
+        return ScreeningService.update_outbreak_area(area_id, payload.model_dump(exclude_unset=True))
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to update outbreak corridor: {str(e)}"
+        )
+
+
+
+@router.delete("/admin/outbreak-areas/{area_id}", summary="Delete / Archive Outbreak Corridor")
+def delete_outbreak_area(area_id: str):
+    """Super Admin Endpoint: Removes or deactivates an outbreak surveillance corridor."""
+    try:
+        ScreeningService.delete_outbreak_area(area_id)
+        return {"message": "Outbreak corridor successfully deleted.", "id": area_id}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to delete outbreak corridor: {str(e)}"
+        )
+
 

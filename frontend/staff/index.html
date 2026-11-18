@@ -3,25 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Portal & Surveillance Console | Ministry of Health, The Gambia</title>
+    <title>Staff Portal & Port Health Surveillance | Ministry of Health, The Gambia</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- HTML5 QR Code Scanner -->
+    <!-- HTML5 QR Code Library -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <style>
+        /* Smooth transitions for sidebar expansion/collapse */
+        #staff-sidebar {
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar-collapsed .sidebar-label,
+        .sidebar-collapsed .sidebar-heading,
+        .sidebar-collapsed .sidebar-brand-text {
+            display: none !important;
+        }
+        .sidebar-collapsed .sidebar-item {
+            justify-content: center !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        .sidebar-collapsed .sidebar-header {
+            justify-content: center !important;
+        }
+        .sidebar-collapsed .sidebar-header-toggle {
+            position: static !important;
+            margin-top: 8px;
+        }
+        /* Pulse animations */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .pulse-urgent {
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col bg-[#f0f4f9] text-slate-800 pb-16 sm:pb-0">
+<body class="min-h-screen flex bg-[#f0f4f9] text-slate-800 antialiased overflow-x-hidden">
 
     <!-- ====================================================================== -->
     <!-- FLIGHT LINE LOADING SCREEN                                             -->
-    <!-- Plane mounted at the moving edge of the loading line                  -->
-    <!-- Secondary Brand Background Color (#0b2545)                             -->
     <!-- ====================================================================== -->
     <div id="page-loader" class="fixed inset-0 z-[100] bg-[#0b2545] flex flex-col items-center justify-center p-4 sm:p-6 transition-all duration-700 ease-out text-white">
         <div class="max-w-xl w-full flex flex-col items-center text-center space-y-8 px-4">
             
-            <!-- Official Coat of Arms & Government Title (Bold, Bigger, Properly Aligned) -->
             <div class="flex flex-col items-center space-y-3">
                 <img src="../assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-2xl">
                 <div class="space-y-1">
@@ -32,35 +61,27 @@
                         The Gambia
                     </h2>
                     <p class="text-xs sm:text-sm font-semibold text-slate-300 tracking-normal pt-0.5">
-                        Port Health Surveillance & Command Console
+                        Port Health Officer & Surveillance Portal
                     </p>
                 </div>
             </div>
 
-            <!-- The Loading Line with Plane Mounted Directly at the Edge -->
             <div class="w-full max-w-md sm:max-w-lg space-y-3 pt-2">
-                <!-- Track Container -->
                 <div class="w-full bg-slate-900/90 rounded-full h-3 p-0.5 border border-slate-700 shadow-inner relative overflow-visible">
-                    <!-- Progress Line (Expanding 0% to 100%) -->
                     <div id="loader-line" class="h-full bg-gradient-to-r from-red-600 via-sky-400 to-emerald-400 rounded-full relative transition-[width] duration-75 ease-linear shadow-[0_0_12px_rgba(56,189,248,0.5)]" style="width: 0%;">
-                        <!-- Airplane: Mounted right at the leading edge of the line -->
                         <div class="absolute -right-5 sm:-right-6 top-1/2 -translate-y-1/2 pointer-events-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] z-10">
                             <svg width="48" height="28" viewBox="-32 -16 80 32" class="w-10 h-6 sm:w-12 sm:h-7 overflow-visible">
-                                <!-- Fuselage with Gambian Tricolor Livery -->
                                 <path d="M -26,0 C -26,-5 -16,-8 -2,-8 L 24,-8 C 34,-8 40,-4 44,0 C 40,4 34,8 24,8 L -2,8 C -16,8 -26,5 -26,0 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
                                 <path d="M 34,-4 C 38,-2 40,-1 41,0 L 36,0 Z" fill="#0b2545"/>
-                                <!-- Gambian Livery Stripes -->
                                 <path d="M -16,-2.5 L 30,-2.5" stroke="#ce1126" stroke-width="2" stroke-linecap="round"/>
                                 <path d="M -16,0 L 32,0" stroke="#0c1c8c" stroke-width="2" stroke-linecap="round"/>
                                 <path d="M -16,2.5 L 28,2.5" stroke="#3a7728" stroke-width="2" stroke-linecap="round"/>
                                 <line x1="-10" y1="-5" x2="22" y2="-5" stroke="#64748b" stroke-width="1.2" stroke-dasharray="2 2"/>
-                                <!-- Wing & Engine -->
                                 <path d="M -2,0 L 14,14 L 7,14 L -8,0 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
                                 <line x1="7" y1="13" x2="13" y2="13" stroke="#ce1126" stroke-width="1.5"/>
                                 <rect x="2" y="7" width="11" height="5" rx="2.5" fill="#07172c"/>
                                 <ellipse cx="13" cy="9.5" rx="1.5" ry="2.2" fill="#38bdf8"/>
                                 <ellipse cx="0" cy="9.5" rx="3" ry="1.5" fill="rgba(56,189,248,0.85)"/>
-                                <!-- Tail Fin with Gambian Stripes -->
                                 <path d="M -23,-2 L -31,-16 L -20,-16 L -13,-2 Z" fill="#0c1c8c"/>
                                 <path d="M -29,-13 L -21,-13" stroke="#ce1126" stroke-width="2"/>
                                 <path d="M -26,-7 L -17,-7" stroke="#3a7728" stroke-width="2"/>
@@ -69,10 +90,9 @@
                     </div>
                 </div>
 
-                <!-- Text & Percentage (Properly Aligned, Bold, Bigger) -->
                 <div class="flex items-center justify-between w-full px-1 text-slate-200">
                     <span id="loader-status" class="text-sm sm:text-base font-bold text-sky-300 tracking-wide">
-                        Loading Surveillance Data...
+                        Loading Port Health Console...
                     </span>
                     <span id="loader-percent" class="text-base sm:text-lg font-black font-mono text-white tracking-wider">
                         0%
@@ -83,274 +103,420 @@
         </div>
     </div>
 
-    <!-- Top Navigation -->
-    <header class="bg-[#0b2545] text-white sticky top-0 z-50 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-            <!-- Brand Logo -->
-            <a href="../index.html" class="flex items-center space-x-3 text-white">
-                <img src="../assets/images/gambia-logo.png" alt="Coat of Arms of The Gambia" class="w-10 h-10 object-contain drop-shadow">
-                <div>
-                    <div class="text-xs sm:text-sm font-bold leading-tight">Ministry of Health</div>
-                    <div class="text-[11px] sm:text-xs text-slate-300 font-medium">The Gambia</div>
-                </div>
-            </a>
-
-            <!-- Role Badge in Header -->
-            <div class="flex items-center space-x-3">
-                <div class="flex items-center text-xs font-semibold text-white bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
-                    <span id="role-pill-indicator" class="w-2 h-2 rounded-full bg-emerald-400 mr-2"></span>
-                    <span id="header-user-name">Loading...</span>
-                    <span id="header-role-badge" class="ml-2 text-[10px] px-2 py-0.5 rounded bg-blue-900 text-blue-200 uppercase font-bold">Officer</span>
-                </div>
-                <button onclick="logoutStaff()" class="text-xs text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-700 transition">
-                    <i class="fa-solid fa-power-off mr-1"></i> Logout
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Role Permission Notice Banner -->
-    <div id="role-notice-bar" class="bg-[#eef4fc] border-b border-[#d6e4f7] px-4 sm:px-6 py-2 text-xs text-[#0b2545] font-medium flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-            <i class="fa-solid fa-id-badge text-[#0066cc]"></i>
-            <span>Active Operational Role: <strong id="notice-role-name">-</strong> &bull; <span id="notice-role-desc" class="text-slate-600">-</span></span>
-        </div>
-        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">Role-Enforced View</span>
-    </div>
-
-    <!-- Main Workspace Layout -->
-    <div class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col lg:flex-row gap-6">
-
-        <!-- ================================================================== -->
-        <!-- LEFT SIDEBAR WITH RBAC-ENABLED TABS                                -->
-        <!-- ================================================================== -->
-        <aside class="hidden lg:flex flex-col w-60 bg-[#0b2545] rounded-2xl text-white p-3 shadow-md shrink-0 justify-between min-h-[580px]">
-            <div class="space-y-1" id="sidebar-tabs-list">
-                <!-- Tab: Scan QR Code (Visible to screening, surveillance, super_admin) -->
-                <button onclick="switchView('scan')" id="tab-btn-scan" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-white bg-[#0066cc] shadow-sm transition">
-                    <i class="fa-solid fa-qrcode text-sm w-4"></i>
-                    <span>Scan QR Code</span>
-                </button>
-
-                <!-- Tab: View Records (Visible to surveillance, supervisor, super_admin) -->
-                <button onclick="switchView('dashboard')" id="tab-btn-dashboard" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition">
-                    <i class="fa-solid fa-table-list text-sm w-4"></i>
-                    <span>View Records Queue</span>
-                </button>
-
-                <!-- Tab: Risk Monitoring (Visible to surveillance, supervisor, super_admin) -->
-                <button onclick="switchView('dashboard')" id="tab-btn-monitoring" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition">
-                    <i class="fa-solid fa-triangle-exclamation text-sm w-4"></i>
-                    <span>Risk Monitoring</span>
-                </button>
-
-                <!-- Tab: Audit Logs (Visible ONLY to Auditor and Super Admin) -->
-                <button onclick="switchView('audit')" id="tab-btn-audit" class="hidden w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition">
-                    <i class="fa-solid fa-clipboard-check text-sm w-4"></i>
-                    <span>Compliance & Audit Logs</span>
-                </button>
-
-                <!-- Tab: Settings / Super Admin Link -->
-                <a href="../admin/index.html" id="link-admin-panel" class="hidden w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-amber-300 hover:text-amber-100 hover:bg-slate-800 transition">
-                    <i class="fa-solid fa-crown text-sm w-4"></i>
-                    <span>Super Admin Center</span>
+    <!-- ====================================================================== -->
+    <!-- FAR-LEFT DOCKED ENTERPRISE SIDEBAR                                     -->
+    <!-- ====================================================================== -->
+    <aside id="staff-sidebar" class="w-64 bg-[#07172c] text-white flex flex-col justify-between shrink-0 border-r border-slate-800 min-h-screen sticky top-0 z-40 shadow-xl">
+        
+        <!-- Top Section of Sidebar -->
+        <div class="p-3.5 space-y-4">
+            
+            <!-- Sidebar Header & Toggle Button -->
+            <div class="sidebar-header flex items-center justify-between pb-3 border-b border-slate-800">
+                <a href="../index.html" class="flex items-center space-x-2.5 overflow-hidden">
+                    <img src="../assets/images/gambia-logo.png" alt="Coat of Arms" class="w-9 h-9 object-contain shrink-0 drop-shadow">
+                    <div class="sidebar-brand-text truncate">
+                        <div class="text-xs font-bold leading-tight text-white tracking-wide">Ministry of Health</div>
+                        <div class="text-[10px] text-sky-400 font-semibold uppercase tracking-wider">Port Health Staff</div>
+                    </div>
                 </a>
-            </div>
-
-            <!-- Bottom Logout -->
-            <div class="pt-4 border-t border-slate-700">
-                <button onclick="logoutStaff()" class="w-full flex items-center space-x-3 px-3 py-2 text-xs font-semibold text-slate-300 hover:text-white transition">
-                    <i class="fa-solid fa-arrow-right-from-bracket text-sm w-4"></i>
-                    <span>Sign Out</span>
+                
+                <!-- Collapse / Expand Icon-Only Toggle Button -->
+                <button id="sidebar-toggle-btn" onclick="toggleStaffSidebar()" class="sidebar-header-toggle p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Toggle Icon-Only Mode (Hide/Show Labels)">
+                    <i id="sidebar-toggle-icon" class="fa-solid fa-angles-left text-xs"></i>
                 </button>
             </div>
-        </aside>
 
-        <!-- ================================================================== -->
-        <!-- CENTER & RIGHT WORKSPACE                                           -->
-        <!-- ================================================================== -->
-        <div class="flex-1 flex flex-col space-y-6">
+            <!-- Navigation Links -->
+            <nav class="space-y-1.5" id="staff-sidebar-nav">
+                <div class="sidebar-heading text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2.5 py-1">Port Health Controls</div>
+                
+                <!-- 1. Scan QR Code & Verify Pass (DEFAULT TAB) -->
+                <button onclick="showStaffTab('scan')" id="tab-btn-scan" class="sidebar-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-white bg-[#0066cc] shadow-sm transition" title="Scan QR Code / Lookup Pass">
+                    <i class="fa-solid fa-qrcode text-sm w-5 text-center shrink-0"></i>
+                    <span class="sidebar-label font-bold truncate">Scan QR / Verify Pass</span>
+                </button>
 
-            <!-- -------------------------------------------------------------- -->
-            <!-- VIEW A: SCAN QR CODE VIEW                                      -->
-            <!-- -------------------------------------------------------------- -->
-            <div id="view-scanner-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 2. Live Declarations Queue -->
+                <button onclick="showStaffTab('queue')" id="tab-btn-queue" class="sidebar-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/70 transition" title="Live Declarations Queue">
+                    <i class="fa-solid fa-table-list text-sm w-5 text-center shrink-0 text-sky-400"></i>
+                    <span class="sidebar-label font-bold truncate">Live Passenger Queue</span>
+                </button>
 
-                <!-- Center Column: Scan QR Code Box -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-                    <div class="navy-section-header">
-                        <i class="fa-solid fa-shield-halved mr-2 text-sm text-slate-300"></i> Scan QR Code
+                <!-- 3. Direct Arrival Intake Form -->
+                <button onclick="showStaffTab('intake')" id="tab-btn-intake" class="sidebar-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/70 transition" title="Direct Arrival Clearance Intake">
+                    <i class="fa-solid fa-passport text-sm w-5 text-center shrink-0 text-amber-400"></i>
+                    <span class="sidebar-label font-bold truncate">Direct Arrival Intake</span>
+                </button>
+
+                <!-- 4. Compliance & Audit Logs (Auditor / Supervisor / Admin) -->
+                <button onclick="showStaffTab('audit')" id="tab-btn-audit" class="hidden sidebar-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/70 transition" title="System Audit Logs">
+                    <i class="fa-solid fa-clipboard-check text-sm w-5 text-center shrink-0 text-emerald-400"></i>
+                    <span class="sidebar-label font-bold truncate">Compliance Audit Trail</span>
+                </button>
+
+                <!-- 5. Super Admin Command Link (Root Admin Only) -->
+                <a href="../admin/index.html" id="link-admin-panel" class="hidden sidebar-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-amber-300 hover:text-white hover:bg-slate-800/70 transition" title="Open Super Admin Console">
+                    <i class="fa-solid fa-crown text-sm w-5 text-center shrink-0 text-amber-400"></i>
+                    <span class="sidebar-label font-bold truncate">Super Admin Console</span>
+                </a>
+            </nav>
+
+        </div>
+
+        <!-- Bottom Sidebar Officer Status -->
+        <div class="p-3.5 border-t border-slate-800 space-y-2">
+            <div class="sidebar-brand-text px-2 py-1 bg-slate-900/80 rounded-xl border border-slate-800 text-[11px] text-slate-300 flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="truncate">BJL Port Health Station</span>
+            </div>
+            <button onclick="logoutStaff()" class="sidebar-item w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold text-red-400 hover:text-white hover:bg-red-600/30 transition" title="Log Out of Station">
+                <i class="fa-solid fa-power-off text-sm w-5 text-center shrink-0"></i>
+                <span class="sidebar-label truncate">Log Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ====================================================================== -->
+    <!-- RIGHT MAIN WORKSPACE AREA                                              -->
+    <!-- ====================================================================== -->
+    <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+
+        <!-- Top Navigation Header -->
+        <header class="bg-[#0b2545] text-white border-b border-slate-800 sticky top-0 z-30 shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+                
+                <!-- Breadcrumb Title -->
+                <div class="flex items-center space-x-3">
+                    <span class="text-xs sm:text-sm font-bold tracking-wide text-white uppercase" id="staff-header-breadcrumb">
+                        Port Health Station &bull; <span class="text-sky-400">Scan QR / Verify Pass</span>
+                    </span>
+                </div>
+
+                <!-- Right Officer Identity & Actions -->
+                <div class="flex items-center space-x-3">
+                    <div class="hidden sm:inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-950/80 text-emerald-300 border border-emerald-800/70">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> Station Online
                     </div>
 
-                    <div class="p-6 flex-1 flex flex-col items-center justify-center text-center space-y-4">
-                        <div class="viewfinder-box relative shadow-md">
-                            <div id="reader" class="w-full h-full"></div>
-                            <div class="viewfinder-bracket viewfinder-tl"></div>
-                            <div class="viewfinder-bracket viewfinder-tr"></div>
-                            <div class="viewfinder-bracket viewfinder-bl"></div>
-                            <div class="viewfinder-bracket viewfinder-br"></div>
-                            <div class="crosshair"></div>
+                    <div class="flex items-center text-xs text-slate-200 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-700">
+                        <i class="fa-solid fa-user-shield text-sky-400 mr-1.5"></i>
+                        <span id="header-user-name" class="font-bold text-white">Officer</span>
+                        <span id="header-role-badge" class="ml-2 text-[10px] px-2 py-0.5 rounded bg-blue-900 text-blue-200 uppercase font-bold">Screening</span>
+                    </div>
+
+                    <button onclick="logoutStaff()" class="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg font-semibold shadow-sm transition flex items-center">
+                        <i class="fa-solid fa-power-off mr-1"></i> Exit
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Role Banner Notification -->
+        <div id="role-notice-bar" class="bg-[#eef4fc] border-b border-[#d6e4f7] px-4 sm:px-6 py-2 text-xs text-[#0b2545] font-medium flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-id-badge text-[#0066cc]"></i>
+                <span>Active Station Role: <strong id="notice-role-name">-</strong> &bull; <span id="notice-role-desc" class="text-slate-600">-</span></span>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">Role-Enforced View</span>
+        </div>
+
+        <!-- Main Workspace Body -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+            <!-- ============================================================== -->
+            <!-- TAB 1: SCAN QR CODE & LIVE TRAVELLER INSPECTION                -->
+            <!-- ============================================================== -->
+            <div id="tab-scan-container" class="space-y-6">
+                
+                <!-- Dual Verification Options Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+                    <!-- Column 1: Dual Verification Input Box (Camera & Manual) -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col space-y-4 p-5 sm:p-6">
+                        
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-8 h-8 rounded-lg bg-blue-50 text-[#0066cc] flex items-center justify-center font-bold">
+                                    <i class="fa-solid fa-qrcode text-base"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-slate-900">Scan QR Code or Enter Reference</h3>
+                                    <p class="text-xs text-slate-500">Scan passenger pass via camera, upload image, or lookup reference</p>
+                                </div>
+                            </div>
                         </div>
 
-                        <p class="text-xs text-slate-500 font-medium">
-                            Scan the traveller's QR code using the device camera
-                        </p>
-
-                        <!-- Manual Reference Input -->
-                        <div class="w-full pt-2">
-                            <div class="relative flex py-2 items-center">
-                                <div class="flex-grow border-t border-slate-200"></div>
-                                <span class="flex-shrink mx-3 text-xs text-slate-400 font-medium">or</span>
-                                <div class="flex-grow border-t border-slate-200"></div>
+                        <!-- 1. Live Camera Viewfinder Box -->
+                        <div class="flex flex-col items-center justify-center space-y-3">
+                            <div class="viewfinder-box relative shadow-inner w-full max-w-[280px] h-[260px] bg-slate-950 rounded-2xl overflow-hidden flex items-center justify-center">
+                                <div id="reader" class="w-full h-full"></div>
+                                <div class="viewfinder-bracket viewfinder-tl"></div>
+                                <div class="viewfinder-bracket viewfinder-tr"></div>
+                                <div class="viewfinder-bracket viewfinder-bl"></div>
+                                <div class="viewfinder-bracket viewfinder-br"></div>
+                                <div class="crosshair"></div>
+                                
+                                <div id="camera-idle-placeholder" class="text-center p-4 text-slate-400 space-y-2 z-10">
+                                    <i class="fa-solid fa-camera text-3xl text-slate-600"></i>
+                                    <p class="text-xs">Click below to start camera scanner</p>
+                                </div>
                             </div>
 
-                            <form id="manual-lookup-form" class="mt-2 flex gap-2">
-                                <input type="text" id="manual-token-input" placeholder="Enter Reference Code e.g. ETS-20251005-7843" class="form-input-styled text-xs">
-                                <button type="submit" class="px-4 py-2 bg-[#0066cc] hover:bg-[#0052a3] text-white font-semibold text-xs rounded-md shadow-sm transition whitespace-nowrap">
-                                    <i class="fa-solid fa-keyboard mr-1"></i> Enter Manually
+                            <!-- Camera Control & File Upload Buttons -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-[280px]">
+                                <button type="button" id="btn-toggle-camera" onclick="toggleCameraScanner()" class="px-3 py-2 bg-[#0066cc] hover:bg-[#0052a3] text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center">
+                                    <i class="fa-solid fa-camera mr-1.5"></i> <span id="camera-btn-text">Start Scanner</span>
+                                </button>
+                                
+                                <label class="cursor-pointer px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl border border-slate-300 transition flex items-center justify-center text-center">
+                                    <i class="fa-solid fa-file-arrow-up mr-1.5 text-blue-600"></i> Upload QR File
+                                    <input type="file" id="qr-file-input" accept="image/*" class="hidden" onchange="handleQRFileUpload(this)">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 2. Manual Reference Lookup Box -->
+                        <div class="pt-3 border-t border-slate-100">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">
+                                Manual Reference / Token Lookup
+                            </label>
+                            <form id="manual-lookup-form" class="flex gap-2">
+                                <input type="text" id="manual-token-input" placeholder="e.g. EB-2026-A1B2C3 or Token Hash" class="form-input-styled font-mono font-bold text-xs">
+                                <button type="submit" id="btn-manual-verify" class="px-4 py-2 bg-[#0066cc] hover:bg-[#0052a3] text-white font-bold text-xs rounded-xl shadow-sm transition whitespace-nowrap flex items-center">
+                                    <i class="fa-solid fa-magnifying-glass mr-1.5"></i> Verify
                                 </button>
                             </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Column: Traveller Information Card -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-                    <div class="navy-section-header">
-                        <i class="fa-solid fa-id-card mr-2 text-sm text-slate-300"></i> Traveller Information
-                    </div>
-
-                    <div class="p-6 flex-1 flex flex-col justify-between space-y-5">
-                        <div id="status-banner" class="p-2.5 rounded-lg bg-[#eaf7ee] border border-[#c7ecd2] flex items-center justify-center text-xs font-bold text-[#1e6b36]">
-                            <i class="fa-solid fa-circle-check mr-2 text-sm text-[#22c55e]"></i>
-                            <span id="banner-text">No Identified Exposure</span>
+                            <span class="text-[11px] text-slate-400 mt-1 block">Inspects cryptographic hash against national database</span>
                         </div>
 
-                        <div class="flex items-center space-x-4 p-3 bg-slate-50/70 rounded-xl border border-slate-100">
-                            <div class="w-14 h-14 rounded-full bg-[#cbd5e1] text-slate-500 flex items-center justify-center text-2xl shrink-0">
+                    </div>
+
+                    <!-- Column 2: Live Verified Traveller Clearance Card -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col p-5 sm:p-6 space-y-4">
+                        
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <h3 class="text-sm font-bold text-slate-900 flex items-center">
+                                <i class="fa-solid fa-id-card text-blue-600 mr-2 text-base"></i> Traveller Health Profile & Clearance
+                            </h3>
+                            <span id="verification-timestamp" class="text-[11px] text-slate-400 font-mono">-</span>
+                        </div>
+
+                        <!-- Status Disposition Banner -->
+                        <div id="status-banner" class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between text-xs font-bold text-emerald-800 transition">
+                            <div class="flex items-center space-x-2.5">
+                                <i id="status-banner-icon" class="fa-solid fa-circle-check text-base text-emerald-600"></i>
+                                <span id="banner-text">Waiting for scanned passenger QR code...</span>
+                            </div>
+                            <span id="risk-pill" class="px-3 py-1 rounded-full text-xs font-extrabold uppercase bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                Ready
+                            </span>
+                        </div>
+
+                        <!-- Passenger Identification Card -->
+                        <div class="flex items-center space-x-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                            <div class="w-14 h-14 rounded-2xl bg-blue-100 text-[#0066cc] flex items-center justify-center text-2xl shrink-0 font-bold">
                                 <i class="fa-solid fa-user"></i>
                             </div>
-                            <div class="space-y-0.5 text-xs sm:text-sm">
-                                <div><strong class="text-slate-500 font-medium">Name:</strong> <span id="info-name" class="font-bold text-slate-900">Fatoumatta Jaiteh</span></div>
-                                <div><strong class="text-slate-500 font-medium">Nationality:</strong> <span id="info-nat" class="text-slate-800">Gambia</span></div>
-                                <div><strong class="text-slate-500 font-medium">Flight Number:</strong> <span id="info-flight" class="font-mono font-bold text-slate-800">QR742</span></div>
+                            <div class="space-y-0.5 text-xs flex-1">
+                                <div class="text-sm font-black text-slate-900" id="info-name">No Passenger Loaded</div>
+                                <div class="text-slate-500 font-mono font-semibold" id="info-ref">-</div>
+                                <div class="flex flex-wrap gap-x-3 text-slate-600 pt-1">
+                                    <span><strong>Passport:</strong> <span id="info-passport">-</span></span>
+                                    <span><strong>Nationality:</strong> <span id="info-nat">-</span></span>
+                                    <span><strong>Flight:</strong> <span id="info-flight" class="font-bold text-blue-600">-</span></span>
+                                </div>
                             </div>
                         </div>
 
+                        <!-- 21-Day Epidemiological History & Itinerary -->
                         <div class="p-4 rounded-xl border border-slate-200 bg-white space-y-2 text-xs">
-                            <div class="font-bold text-[#0b2545] border-b border-slate-100 pb-1.5 flex items-center">
-                                <i class="fa-solid fa-plane text-[#0066cc] mr-1.5"></i> Travel Details
+                            <div class="font-bold text-slate-900 border-b border-slate-100 pb-1.5 flex items-center justify-between">
+                                <span class="flex items-center">
+                                    <i class="fa-solid fa-earth-africa text-blue-600 mr-1.5"></i> 21-Day Exposure & Country History
+                                </span>
+                                <span id="info-days-exp" class="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono">21-Day Window</span>
+                            </div>
+
+                            <div class="flex justify-between py-1">
+                                <span class="text-slate-500">Visited Countries:</span>
+                                <span id="info-history" class="font-bold text-slate-800">None Declared</span>
                             </div>
                             <div class="flex justify-between py-1">
-                                <span class="text-slate-500">Travel History:</span>
-                                <span id="info-history" class="font-medium text-slate-800">Guinea, Sierra Leone</span>
+                                <span class="text-slate-500">Contact with Known Case:</span>
+                                <span id="info-case-contact" class="font-bold text-slate-800">No</span>
                             </div>
                             <div class="flex justify-between py-1">
-                                <span class="text-slate-500">Last Exposure Date:</span>
-                                <span id="info-last-exp" class="font-medium text-slate-800">N/A</span>
-                            </div>
-                            <div class="flex justify-between py-1">
-                                <span class="text-slate-500">Days Since Exposure:</span>
-                                <span id="info-days-exp" class="font-medium text-slate-800">N/A</span>
+                                <span class="text-slate-500">Healthcare Facility Exposure:</span>
+                                <span id="info-healthcare" class="font-bold text-slate-800">No</span>
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-                            <span class="font-bold text-slate-700 flex items-center">
-                                <i class="fa-solid fa-shield-virus mr-1.5 text-[#0066cc]"></i> Risk Assessment
-                            </span>
-                            <span id="risk-pill" class="px-3 py-1 rounded-full text-xs font-bold bg-[#eaf7ee] text-[#1e6b36] border border-[#c7ecd2]">
-                                Low Risk
-                            </span>
+                        <!-- Clinical Vitals & Symptoms -->
+                        <div class="grid grid-cols-2 gap-3 text-xs">
+                            <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between">
+                                <span class="text-slate-500 font-semibold">Temperature:</span>
+                                <strong id="info-temp" class="text-slate-900 font-mono text-sm">36.8°C</strong>
+                            </div>
+                            <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between">
+                                <span class="text-slate-500 font-semibold">Symptoms:</span>
+                                <strong id="info-symptoms" class="text-emerald-700 font-bold">None Declared</strong>
+                            </div>
                         </div>
 
-                        <div class="flex gap-2.5 pt-2">
-                            <button onclick="openFullDetailsModal()" id="btn-view-details" class="flex-1 py-2.5 px-3 bg-[#0066cc] hover:bg-[#0052a3] text-white font-semibold text-xs rounded-md shadow-sm transition flex items-center justify-center">
-                                <i class="fa-solid fa-eye mr-1.5"></i> View Full Details
+                        <!-- Action Buttons: Clear, Secondary Review, Isolation -->
+                        <div class="space-y-2 pt-2 border-t border-slate-100" id="officer-actions-panel">
+                            <span class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">Officer Clearance Action</span>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                <button type="button" onclick="recordOfficerAction('CLEARED', 'Cleared for entry')" class="px-3 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center">
+                                    <i class="fa-solid fa-circle-check mr-1.5"></i> Clear for Entry
+                                </button>
+                                <button type="button" onclick="recordOfficerAction('MODERATE', 'Secondary screening')" class="px-3 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center">
+                                    <i class="fa-solid fa-stethoscope mr-1.5"></i> Secondary Review
+                                </button>
+                                <button type="button" onclick="recordOfficerAction('HIGH', 'Isolation referral')" class="px-3 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center">
+                                    <i class="fa-solid fa-radiation mr-1.5"></i> Quarantine
+                                </button>
+                            </div>
+                            <button type="button" onclick="window.print()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition flex items-center justify-center">
+                                <i class="fa-solid fa-print mr-1.5"></i> Print Official Clearance Pass
                             </button>
-                            <button onclick="window.print()" class="py-2.5 px-4 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-md transition flex items-center">
-                                <i class="fa-solid fa-print mr-1.5"></i> Print Report
-                            </button>
                         </div>
 
-                        <!-- Officer Disposition (Referral / Clearance) -->
-                        <div id="clearance-banner" class="p-2.5 rounded-lg bg-[#eaf7ee] border border-[#c7ecd2] flex items-center text-xs font-bold text-[#1e6b36]">
-                            <i class="fa-solid fa-circle-check mr-2 text-sm text-[#22c55e]"></i>
-                            <span>Traveller cleared for entry.</span>
-                        </div>
                     </div>
+
                 </div>
 
             </div>
 
-            <!-- -------------------------------------------------------------- -->
-            <!-- VIEW B: RECORDS DASHBOARD                                      -->
-            <!-- -------------------------------------------------------------- -->
-            <div id="view-dashboard-container" class="hidden space-y-6">
-                <div class="navy-section-header">
-                    <i class="fa-solid fa-chart-column mr-2 text-sm text-slate-300"></i> Port Health Surveillance Overview
-                </div>
+            <!-- ============================================================== -->
+            <!-- TAB 2: LIVE DECLARATIONS QUEUE (REAL SUPABASE DATA)            -->
+            <!-- ============================================================== -->
+            <div id="tab-queue-container" class="hidden space-y-4">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 space-y-4">
+                    
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-3 border-b border-slate-200 gap-3">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Arriving Passenger Declarations Queue</h2>
+                            <p class="text-xs text-slate-500">Live operational screening feed from Banjul International Airport (BJL).</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="loadQueueTable()" class="px-3 py-1.5 border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-lg transition flex items-center">
+                                <i class="fa-solid fa-arrows-rotate mr-1.5 text-blue-600"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
 
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-                        <div class="w-10 h-10 rounded-full bg-blue-50 text-[#0066cc] flex items-center justify-center text-lg mb-2"><i class="fa-solid fa-users"></i></div>
-                        <span class="text-xs font-semibold text-slate-500">Total Travellers</span>
-                        <span id="kpi-total" class="text-2xl font-black text-slate-900 mt-1">245</span>
+                    <!-- Search & Filter Bar -->
+                    <div class="flex flex-col sm:flex-row gap-3 items-center justify-between">
+                        <div class="relative w-full sm:w-80">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" id="queue-search-input" oninput="filterQueueTable(this.value)" placeholder="Search passenger name, flight, passport..." class="form-input-styled pl-9 text-xs">
+                        </div>
+                        <div class="flex gap-1.5 text-xs">
+                            <button onclick="filterQueueCategory('ALL')" class="px-3 py-1.5 rounded-lg font-bold bg-[#0b2545] text-white">All</button>
+                            <button onclick="filterQueueCategory('HIGH')" class="px-3 py-1.5 rounded-lg font-bold bg-red-100 text-red-700 hover:bg-red-200">High Risk</button>
+                            <button onclick="filterQueueCategory('MODERATE')" class="px-3 py-1.5 rounded-lg font-bold bg-amber-100 text-amber-700 hover:bg-amber-200">Moderate</button>
+                            <button onclick="filterQueueCategory('CLEARED')" class="px-3 py-1.5 rounded-lg font-bold bg-emerald-100 text-emerald-700 hover:bg-emerald-200">Cleared</button>
+                        </div>
                     </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-                        <div class="w-10 h-10 rounded-full bg-emerald-50 text-[#16a34a] flex items-center justify-center text-lg mb-2"><i class="fa-solid fa-circle-check"></i></div>
-                        <span class="text-xs font-semibold text-slate-500">No Risk</span>
-                        <span id="kpi-no-risk" class="text-2xl font-black text-[#16a34a] mt-1">182</span>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-                        <div class="w-10 h-10 rounded-full bg-amber-50 text-[#ea580c] flex items-center justify-center text-lg mb-2"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                        <span class="text-xs font-semibold text-slate-500">Moderate Risk</span>
-                        <span id="kpi-moderate" class="text-2xl font-black text-[#ea580c] mt-1">42</span>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-                        <div class="w-10 h-10 rounded-full bg-rose-50 text-[#dc2626] flex items-center justify-center text-lg mb-2"><i class="fa-solid fa-radiation"></i></div>
-                        <span class="text-xs font-semibold text-slate-500">High Risk</span>
-                        <span id="kpi-high" class="text-2xl font-black text-[#dc2626] mt-1">21</span>
-                    </div>
-                </div>
 
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                    <div class="p-4 border-b border-slate-200 flex items-center justify-between">
-                        <h3 class="text-sm font-bold text-slate-900">Arriving Passenger Declarations</h3>
-                        <span class="text-xs text-slate-500">Banjul International Airport</span>
-                    </div>
+                    <!-- Table -->
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-xs">
                             <thead>
                                 <tr class="bg-slate-50 text-slate-500 font-bold uppercase text-[11px] border-b border-slate-200">
-                                    <th class="p-3">Passenger</th>
-                                    <th class="p-3">Risk Assessment</th>
-                                    <th class="p-3">Arrival Date</th>
-                                    <th class="p-3 text-right">Action</th>
+                                    <th class="p-3.5">Passenger</th>
+                                    <th class="p-3.5">Reference</th>
+                                    <th class="p-3.5">Flight Number</th>
+                                    <th class="p-3.5">Triage Assessment</th>
+                                    <th class="p-3.5">Status</th>
+                                    <th class="p-3.5 text-right">Inspect</th>
                                 </tr>
                             </thead>
-                            <tbody id="records-tbody" class="divide-y divide-slate-100">
-                                <!-- Populated dynamically -->
+                            <tbody id="queue-tbody" class="divide-y divide-slate-100">
+                                <tr>
+                                    <td colspan="6" class="p-8 text-center text-slate-400">Loading declarations queue...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
+
                 </div>
             </div>
 
-            <!-- -------------------------------------------------------------- -->
-            <!-- VIEW C: AUDIT LOGS (Auditors & Admin only)                      -->
-            <!-- -------------------------------------------------------------- -->
-            <div id="view-audit-container" class="hidden space-y-4">
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                    <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+            <!-- ============================================================== -->
+            <!-- TAB 3: DIRECT ARRIVAL INTAKE FORM                              -->
+            <!-- ============================================================== -->
+            <div id="tab-intake-container" class="hidden space-y-4">
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-4">
+                    <div class="pb-3 border-b border-slate-200">
+                        <h2 class="text-base font-bold text-slate-900">Direct In-Person Arrival Intake</h2>
+                        <p class="text-xs text-slate-500">Record arriving passenger health declaration on-site if they did not fill the online form.</p>
+                    </div>
+
+                    <form id="staff-intake-form" class="space-y-4 text-xs">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block font-bold text-slate-700 uppercase mb-1">Full Name *</label>
+                                <input type="text" id="si_name" required placeholder="Passenger Full Name" class="form-input-styled">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 uppercase mb-1">Passport Number *</label>
+                                <input type="text" id="si_passport" required placeholder="e.g. GAM10029" class="form-input-styled">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 uppercase mb-1">Nationality *</label>
+                                <input type="text" id="si_nat" required placeholder="e.g. The Gambia" class="form-input-styled">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block font-bold text-slate-700 uppercase mb-1">Flight Number *</label>
+                                <input type="text" id="si_flight" required placeholder="e.g. SN241" class="form-input-styled">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 uppercase mb-1">Body Temperature (°C) *</label>
+                                <input type="number" step="0.1" id="si_temp" required value="36.8" class="form-input-styled">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 uppercase mb-1">Recent Country Visited (Past 21 Days)</label>
+                                <select id="si_country" class="form-input-styled">
+                                    <option value="Uganda">Uganda (Ebola Sudan Corridor)</option>
+                                    <option value="Democratic Republic of the Congo">DR Congo (Ebola Zaire Corridor)</option>
+                                    <option value="Rwanda">Rwanda (Marburg Corridor)</option>
+                                    <option value="Senegal" selected>Senegal</option>
+                                    <option value="Other">Other Country</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-200 flex justify-end space-x-2">
+                            <button type="reset" class="px-4 py-2 border border-slate-300 rounded-xl font-semibold">Reset</button>
+                            <button type="submit" id="si_btn" class="px-5 py-2 bg-[#0066cc] text-white font-bold rounded-xl shadow">
+                                <i class="fa-solid fa-check mr-1.5"></i> Save Declaration & Issue Pass
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- TAB 4: COMPLIANCE AUDIT LOGS                                   -->
+            <!-- ============================================================== -->
+            <div id="tab-audit-container" class="hidden space-y-4">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden p-5 sm:p-6 space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
                         <div>
-                            <h3 class="text-sm font-bold text-slate-900">Official Access & Compliance Audit Trail</h3>
-                            <p class="text-xs text-slate-500">Read-only tamper-evident logs for policy compliance and data retention verification.</p>
+                            <h2 class="text-base font-bold text-slate-900">Official Access & Compliance Audit Trail</h2>
+                            <p class="text-xs text-slate-500">Tamper-evident logs of QR scans, officer overrides, and data access.</p>
                         </div>
                         <button onclick="loadAuditTrail()" class="px-3 py-1.5 border border-slate-300 text-xs rounded-lg hover:bg-slate-50">
-                            <i class="fa-solid fa-arrows-rotate mr-1"></i> Refresh Logs
+                            <i class="fa-solid fa-arrows-rotate mr-1"></i> Refresh
                         </button>
                     </div>
+
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-xs font-mono text-[11px]">
                             <thead>
@@ -359,7 +525,7 @@
                                     <th class="p-3">Officer</th>
                                     <th class="p-3">Role</th>
                                     <th class="p-3">Action</th>
-                                    <th class="p-3">Context</th>
+                                    <th class="p-3">Details</th>
                                 </tr>
                             </thead>
                             <tbody id="staff-audit-tbody" class="divide-y divide-slate-100">
@@ -370,59 +536,18 @@
                 </div>
             </div>
 
-        </div>
-
-    </div>
-
-    <!-- Mobile Bottom Navigation -->
-    <nav class="mobile-bottom-nav lg:hidden">
-        <a href="javascript:void(0)" onclick="switchView('dashboard')" id="m-nav-home" class="mobile-nav-item">
-            <i class="fa-solid fa-house"></i>
-            <span>Home</span>
-        </a>
-        <a href="javascript:void(0)" onclick="switchView('scan')" id="m-nav-records" class="mobile-nav-item active">
-            <i class="fa-solid fa-qrcode"></i>
-            <span>Records</span>
-        </a>
-        <a href="javascript:void(0)" onclick="logoutStaff()" class="mobile-nav-item">
-            <i class="fa-solid fa-power-off"></i>
-            <span>Logout</span>
-        </a>
-    </nav>
-
-    <!-- Detailed Modal -->
-    <div id="full-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-slate-200">
-            <div class="navy-section-header justify-between">
-                <span>Detailed Case Record</span>
-                <button onclick="document.getElementById('full-modal').classList.add('hidden')" class="text-white text-base font-bold">&times;</button>
-            </div>
-            <div class="p-6 space-y-4 text-xs">
-                <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
-                    <div><strong>Name:</strong> <span id="mod-name">Fatoumatta Jaiteh</span></div>
-                    <div><strong>Nationality:</strong> <span id="mod-nat">Gambia</span></div>
-                    <div><strong>Flight:</strong> <span id="mod-flight">QR742</span></div>
-                    <div><strong>Countries in last 21 days:</strong> Guinea, Sierra Leone</div>
-                    <div><strong>Symptom Check:</strong> No acute fever or bleeding declared</div>
-                </div>
-
-                <div class="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900">
-                    <strong>Surveillance Determination:</strong> Passenger cleared for routine arrival.
-                </div>
-
-                <div class="flex justify-end pt-2">
-                    <button onclick="document.getElementById('full-modal').classList.add('hidden')" class="px-5 py-2 bg-[#0066cc] text-white font-semibold rounded-md text-xs">
-                        Close
-                    </button>
-                </div>
-            </div>
-        </div>
+        </main>
     </div>
 
     <!-- Scripts -->
+    <script src="../assets/js/loader.js"></script>
     <script src="../assets/js/api.js"></script>
     <script>
         let currentUser = null;
+        let html5QrScanner = null;
+        let isCameraRunning = false;
+        let currentLoadedSubmission = null;
+        let cachedSubmissions = [];
 
         document.addEventListener('DOMContentLoaded', () => {
             currentUser = OutbreakAPI.getCurrentUser();
@@ -431,15 +556,47 @@
                 return;
             }
 
-            // Display logged in identity
             document.getElementById('header-user-name').textContent = currentUser.full_name;
             document.getElementById('header-role-badge').textContent = currentUser.role_title;
             document.getElementById('notice-role-name').textContent = currentUser.role_title;
 
-            // Apply RBAC permissions to UI
             applyRolePermissions(currentUser.role);
-            loadRecordsTable();
+
+            // Restore sidebar state from localStorage
+            if (localStorage.getItem('staff_sidebar_collapsed') === 'true') {
+                applyStaffSidebarCollapsed(true);
+            }
+
+            // Default to SCAN tab
+            showStaffTab('scan');
+            loadQueueTable();
         });
+
+        // ----------------------------------------------------------------------
+        // SIDEBAR TOGGLE (ICON-ONLY MODE)
+        // ----------------------------------------------------------------------
+        function toggleStaffSidebar() {
+            const sidebar = document.getElementById('staff-sidebar');
+            const isCurrentlyCollapsed = sidebar.classList.contains('sidebar-collapsed');
+            applyStaffSidebarCollapsed(!isCurrentlyCollapsed);
+            localStorage.setItem('staff_sidebar_collapsed', (!isCurrentlyCollapsed).toString());
+        }
+
+        function applyStaffSidebarCollapsed(collapse) {
+            const sidebar = document.getElementById('staff-sidebar');
+            const icon = document.getElementById('sidebar-toggle-icon');
+            if (collapse) {
+                sidebar.classList.add('sidebar-collapsed');
+                sidebar.classList.remove('w-64');
+                sidebar.classList.add('w-20');
+                if (icon) icon.className = "fa-solid fa-angles-right text-xs";
+            } else {
+                sidebar.classList.remove('sidebar-collapsed');
+                sidebar.classList.remove('w-20');
+                sidebar.classList.add('w-64');
+                if (icon) icon.className = "fa-solid fa-angles-left text-xs";
+            }
+        }
 
         function logoutStaff() {
             OutbreakAPI.logout('login.html');
@@ -447,55 +604,378 @@
 
         function applyRolePermissions(role) {
             const descMap = {
-                super_admin: "Super Administrator with unrestricted access to all operational, user management, and audit tools.",
-                screening_officer: "Airport Screening Officer: Authenticate, scan QR, view permitted screening summary, record screening outcome and refer cases.",
-                surveillance_officer: "Surveillance Officer: Review exposure details, assess risk, record official decisions, assign monitoring and follow-up.",
-                supervisor: "Public-Health Supervisor: Approve rules, review escalations, monitor workload and operational reports.",
-                auditor: "Auditor / Data-Protection Officer: Review access logs, policy compliance, retention and data handling."
+                super_admin: "Super Administrator with full access to screening, queue oversight, and governance.",
+                screening_officer: "Airport Screening Officer: Scan QR passes, view travel history, record clearance or quarantine referrals.",
+                surveillance_officer: "Surveillance Officer: In-depth clinical review, contact tracing, and 21-day tracking.",
+                supervisor: "Public-Health Supervisor: Oversee station clearance flow and audit events.",
+                auditor: "Auditor / Data-Protection Officer: Inspect access trails and retention compliance."
             };
-            document.getElementById('notice-role-desc').textContent = descMap[role] || "Port Health Officer";
+            document.getElementById('notice-role-desc').textContent = descMap[role] || "Port Health Station";
 
-            // If super_admin, reveal link to admin panel and audit logs
             if (role === 'super_admin') {
                 document.getElementById('link-admin-panel').classList.remove('hidden');
                 document.getElementById('tab-btn-audit').classList.remove('hidden');
             } else if (role === 'auditor') {
-                // Auditor sees audit logs by default
                 document.getElementById('tab-btn-audit').classList.remove('hidden');
-                document.getElementById('tab-btn-scan').classList.add('hidden');
-                switchView('audit');
-                loadAuditTrail();
-            } else if (role === 'screening_officer') {
-                // Screening officer only sees scanner and summary
-                document.getElementById('tab-btn-monitoring').classList.add('hidden');
+                showStaffTab('audit');
+            } else if (role === 'supervisor') {
+                document.getElementById('tab-btn-audit').classList.remove('hidden');
             }
         }
 
-        function switchView(view) {
-            const scanBox = document.getElementById('view-scanner-container');
-            const dashBox = document.getElementById('view-dashboard-container');
-            const auditBox = document.getElementById('view-audit-container');
+        // ----------------------------------------------------------------------
+        // TAB SWITCHING
+        // ----------------------------------------------------------------------
+        const STAFF_TABS = ['scan', 'queue', 'intake', 'audit'];
+        const STAFF_TITLES = {
+            scan: 'Scan QR / Verify Pass',
+            queue: 'Live Declarations Queue',
+            intake: 'Direct Arrival Intake',
+            audit: 'Compliance Audit Trail'
+        };
 
-            scanBox.classList.add('hidden');
-            dashBox.classList.add('hidden');
-            auditBox.classList.add('hidden');
-
-            document.querySelectorAll('#sidebar-tabs-list button').forEach(b => {
-                b.className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition";
+        function showStaffTab(tab) {
+            STAFF_TABS.forEach(t => {
+                const container = document.getElementById(`tab-${t}-container`);
+                if (container) container.classList.add('hidden');
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (btn) {
+                    btn.className = "sidebar-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/70 transition";
+                }
             });
 
-            if (view === 'scan') {
-                scanBox.classList.remove('hidden');
-                document.getElementById('tab-btn-scan').className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-white bg-[#0066cc] shadow-sm transition";
-            } else if (view === 'dashboard') {
-                dashBox.classList.remove('hidden');
-                document.getElementById('tab-btn-dashboard').className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-white bg-[#0066cc] shadow-sm transition";
-            } else if (view === 'audit') {
-                auditBox.classList.remove('hidden');
-                document.getElementById('tab-btn-audit').className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-white bg-[#0066cc] shadow-sm transition";
-                loadAuditTrail();
+            const targetContainer = document.getElementById(`tab-${tab}-container`);
+            if (targetContainer) targetContainer.classList.remove('hidden');
+
+            const activeBtn = document.getElementById(`tab-btn-${tab}`);
+            if (activeBtn) {
+                activeBtn.className = "sidebar-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-white bg-[#0066cc] shadow-sm transition";
+            }
+
+            const breadcrumb = document.getElementById('staff-header-breadcrumb');
+            if (breadcrumb) {
+                breadcrumb.innerHTML = `Port Health Station &bull; <span class="text-sky-400">${STAFF_TITLES[tab] || tab}</span>`;
+            }
+
+            if (tab === 'queue') loadQueueTable();
+            if (tab === 'audit') loadAuditTrail();
+        }
+
+        // ----------------------------------------------------------------------
+        // CAMERA SCANNER & FILE UPLOAD
+        // ----------------------------------------------------------------------
+        async function toggleCameraScanner() {
+            const btnText = document.getElementById('camera-btn-text');
+            const placeholder = document.getElementById('camera-idle-placeholder');
+
+            if (isCameraRunning) {
+                if (html5QrScanner) {
+                    await html5QrScanner.stop();
+                    html5QrScanner = null;
+                }
+                isCameraRunning = false;
+                btnText.textContent = "Start Scanner";
+                placeholder.classList.remove('hidden');
+            } else {
+                try {
+                    placeholder.classList.add('hidden');
+                    btnText.textContent = "Starting...";
+                    html5QrScanner = new Html5Qrcode("reader");
+
+                    await html5QrScanner.start(
+                        { facingMode: "environment" },
+                        { fps: 10, qrbox: { width: 220, height: 220 } },
+                        (decodedText) => {
+                            // On successful scan
+                            handleTokenResolution(decodedText);
+                            toggleCameraScanner(); // stop camera after successful scan
+                        },
+                        (errorMessage) => {
+                            // parse error, ignore frame drop
+                        }
+                    );
+
+                    isCameraRunning = true;
+                    btnText.textContent = "Stop Camera";
+                } catch (err) {
+                    console.error("Camera start error:", err);
+                    alert("Unable to access camera: " + err.message + ". You can use file upload or manual reference input instead.");
+                    btnText.textContent = "Start Scanner";
+                    placeholder.classList.remove('hidden');
+                    isCameraRunning = false;
+                }
             }
         }
+
+        async function handleQRFileUpload(input) {
+            if (!input.files || !input.files[0]) return;
+            const file = input.files[0];
+            try {
+                const scanner = new Html5Qrcode("reader");
+                const decodedText = await scanner.scanFile(file, true);
+                handleTokenResolution(decodedText);
+            } catch (err) {
+                alert("Could not detect a valid QR code in the uploaded image. Please ensure the QR is clear or use the manual reference code.");
+            }
+        }
+
+        // Manual Lookup Form Submit
+        document.getElementById('manual-lookup-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const val = document.getElementById('manual-token-input').value.trim();
+            if (!val) {
+                alert("Please enter a reference code or QR token hash.");
+                return;
+            }
+            handleTokenResolution(val);
+        });
+
+        // ----------------------------------------------------------------------
+        // TOKEN RESOLUTION & PASSENGER PROFILE RENDER
+        // ----------------------------------------------------------------------
+        async function handleTokenResolution(tokenOrRef) {
+            const banner = document.getElementById('status-banner');
+            const bannerText = document.getElementById('banner-text');
+            const pill = document.getElementById('risk-pill');
+
+            bannerText.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Verifying token in national database...`;
+
+            try {
+                const sub = await OutbreakAPI.verifyQRToken(tokenOrRef);
+                currentLoadedSubmission = sub;
+                displayVerifiedPassenger(sub);
+            } catch (err) {
+                banner.className = "p-3.5 rounded-xl bg-red-100 border border-red-300 flex items-center justify-between text-xs font-bold text-red-800";
+                bannerText.textContent = "Verification Failed: " + err.message;
+                pill.className = "px-3 py-1 rounded-full text-xs font-extrabold uppercase bg-red-200 text-red-800";
+                pill.textContent = "INVALID";
+            }
+        }
+
+        function displayVerifiedPassenger(sub) {
+            const t = sub.traveller || {};
+            const category = sub.preliminary_risk_category || 'NO_IDENTIFIED_EXPOSURE';
+            const symptoms = sub.symptoms || {};
+
+            document.getElementById('info-name').textContent = t.full_name || 'Passenger';
+            document.getElementById('info-ref').textContent = sub.reference_code || '-';
+            document.getElementById('info-passport').textContent = t.passport_number || 'N/A';
+            document.getElementById('info-nat').textContent = t.nationality || 'N/A';
+            document.getElementById('info-flight').textContent = sub.flight_number || 'N/A';
+            document.getElementById('verification-timestamp').textContent = new Date().toLocaleTimeString();
+
+            // Exposure history
+            const itinerary = sub.itinerary || [];
+            const countries = itinerary.map(i => i.country_name).filter(Boolean);
+            document.getElementById('info-history').textContent = countries.join(', ') || 'No Outbreak Travel';
+
+            const exposures = sub.exposures || [];
+            const hasCaseContact = exposures.some(e => e.answer === 'Yes');
+            document.getElementById('info-case-contact').textContent = hasCaseContact ? 'YES - Direct Contact' : 'No';
+            document.getElementById('info-case-contact').className = hasCaseContact ? 'font-bold text-red-600' : 'font-bold text-slate-800';
+
+            const healthcare = sub.healthcare || [];
+            const hasHealthcare = healthcare.some(h => h.answer === 'Yes');
+            document.getElementById('info-healthcare').textContent = hasHealthcare ? 'YES - High Risk' : 'No';
+            document.getElementById('info-healthcare').className = hasHealthcare ? 'font-bold text-red-600' : 'font-bold text-slate-800';
+
+            // Clinical Vitals
+            document.getElementById('info-temp').textContent = (symptoms.body_temperature || 36.8) + '°C';
+            const sList = symptoms.symptoms_list || [];
+            if (sList.length > 0) {
+                document.getElementById('info-symptoms').textContent = sList.join(', ');
+                document.getElementById('info-symptoms').className = 'text-red-600 font-bold';
+            } else {
+                document.getElementById('info-symptoms').textContent = 'None Declared';
+                document.getElementById('info-symptoms').className = 'text-emerald-700 font-bold';
+            }
+
+            // Update Banner
+            const banner = document.getElementById('status-banner');
+            const bannerIcon = document.getElementById('status-banner-icon');
+            const bannerText = document.getElementById('banner-text');
+            const pill = document.getElementById('risk-pill');
+
+            if (category === 'HIGH') {
+                banner.className = "p-3.5 rounded-xl bg-red-100 border border-red-300 flex items-center justify-between text-xs font-bold text-red-800 pulse-urgent";
+                bannerIcon.className = "fa-solid fa-triangle-exclamation text-base text-red-600";
+                bannerText.textContent = "CRITICAL HIGH RISK &bull; Quarantine Protocol Required";
+                pill.className = "px-3 py-1 rounded-full text-xs font-extrabold uppercase bg-red-600 text-white";
+                pill.textContent = "HIGH RISK";
+            } else if (category === 'MODERATE') {
+                banner.className = "p-3.5 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-between text-xs font-bold text-amber-800";
+                bannerIcon.className = "fa-solid fa-triangle-exclamation text-base text-amber-600";
+                bannerText.textContent = "MODERATE RISK &bull; 21-Day Surveillance Tracking";
+                pill.className = "px-3 py-1 rounded-full text-xs font-extrabold uppercase bg-amber-500 text-white";
+                pill.textContent = "MODERATE";
+            } else {
+                banner.className = "p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 flex items-center justify-between text-xs font-bold text-emerald-800";
+                bannerIcon.className = "fa-solid fa-circle-check text-base text-emerald-600";
+                bannerText.textContent = "PASS &bull; Cleared for Entry (No Identified Exposure)";
+                pill.className = "px-3 py-1 rounded-full text-xs font-extrabold uppercase bg-emerald-600 text-white";
+                pill.textContent = "CLEARED";
+            }
+        }
+
+        async function recordOfficerAction(category, disposition) {
+            if (!currentLoadedSubmission) {
+                alert("Please scan or verify a traveller first.");
+                return;
+            }
+
+            try {
+                const payload = {
+                    officer_name: currentUser.full_name,
+                    officer_role: currentUser.role_title,
+                    officer_category: category,
+                    officer_rationale: `Airport officer screening determination: ${disposition}`,
+                    disposition: disposition
+                };
+
+                await OutbreakAPI.recordOfficerAssessment(currentLoadedSubmission.id, payload);
+                alert(`Screening decision "${disposition}" recorded in national surveillance ledger.`);
+                loadQueueTable();
+            } catch (err) {
+                alert("Failed to record officer decision: " + err.message);
+            }
+        }
+
+        // ----------------------------------------------------------------------
+        // QUEUE TABLE & SEARCH LOGIC
+        // ----------------------------------------------------------------------
+        async function loadQueueTable() {
+            try {
+                const list = await OutbreakAPI.getStaffSubmissions();
+                cachedSubmissions = list || [];
+                renderQueueRows(cachedSubmissions);
+            } catch (err) {
+                console.error("Queue load error:", err);
+            }
+        }
+
+        function renderQueueRows(subs) {
+            const tbody = document.getElementById('queue-tbody');
+            if (!subs || !subs.length) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">No declarations recorded in national registry.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = subs.map(s => {
+                const category = s.preliminary_risk_category;
+                let riskBadge = "bg-emerald-100 text-emerald-800";
+                if (category === 'HIGH') riskBadge = "bg-red-100 text-red-800 font-bold";
+                else if (category === 'MODERATE') riskBadge = "bg-amber-100 text-amber-800 font-bold";
+
+                return `
+                    <tr class="hover:bg-slate-50 transition cursor-pointer" onclick="inspectQueueItem('${s.id}')">
+                        <td class="p-3.5 font-bold text-slate-900">${s.traveller.full_name}</td>
+                        <td class="p-3.5 font-mono text-slate-600 font-semibold">${s.reference_code}</td>
+                        <td class="p-3.5 font-bold text-blue-700">${s.flight_number}</td>
+                        <td class="p-3.5"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${riskBadge}">${category}</span></td>
+                        <td class="p-3.5 text-slate-500 font-semibold">${s.status}</td>
+                        <td class="p-3.5 text-right">
+                            <button class="px-2.5 py-1 bg-[#0066cc] text-white rounded text-xs font-semibold hover:bg-[#0052a3]">
+                                Inspect &rarr;
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterQueueTable(term) {
+            const q = term.toLowerCase().trim();
+            if (!q) {
+                renderQueueRows(cachedSubmissions);
+                return;
+            }
+            const filtered = cachedSubmissions.filter(s => {
+                const name = (s.traveller.full_name || '').toLowerCase();
+                const ref = (s.reference_code || '').toLowerCase();
+                const flight = (s.flight_number || '').toLowerCase();
+                const passport = (s.traveller.passport_number || '').toLowerCase();
+                return name.includes(q) || ref.includes(q) || flight.includes(q) || passport.includes(q);
+            });
+            renderQueueRows(filtered);
+        }
+
+        function filterQueueCategory(cat) {
+            if (cat === 'ALL') {
+                renderQueueRows(cachedSubmissions);
+                return;
+            }
+            const filtered = cachedSubmissions.filter(s => {
+                if (cat === 'CLEARED') return s.preliminary_risk_category === 'NO_IDENTIFIED_EXPOSURE' || s.preliminary_risk_category === 'LOW';
+                return s.preliminary_risk_category === cat;
+            });
+            renderQueueRows(filtered);
+        }
+
+        function inspectQueueItem(id) {
+            const sub = cachedSubmissions.find(s => s.id === id);
+            if (sub) {
+                currentLoadedSubmission = sub;
+                displayVerifiedPassenger(sub);
+                showStaffTab('scan');
+            }
+        }
+
+        // Direct Intake Submission Form
+        document.getElementById('staff-intake-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('si_btn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Saving...`;
+
+            try {
+                const temp = parseFloat(document.getElementById('si_temp').value) || 36.8;
+                const country = document.getElementById('si_country').value;
+                const payload = {
+                    personal: {
+                        full_name: document.getElementById('si_name').value.trim(),
+                        date_of_birth: "1990-01-01",
+                        sex: "other",
+                        nationality: document.getElementById('si_nat').value.trim(),
+                        residence_country: document.getElementById('si_nat').value.trim(),
+                        passport_number: document.getElementById('si_passport').value.trim(),
+                        phone_number: "+220 700 0000",
+                        address_in_gambia: "Banjul",
+                        flight_number: document.getElementById('si_flight').value.trim(),
+                        arrival_airport: "Banjul International Airport (BJL)",
+                        arrival_date_time: new Date().toISOString()
+                    },
+                    itinerary: [
+                        {
+                            country_name: country,
+                            entry_date: "2026-10-25",
+                            departure_date: "2026-11-10",
+                            purpose_of_visit: "Travel"
+                        }
+                    ],
+                    exposures: [],
+                    healthcare: [],
+                    environmental: [],
+                    symptoms: {
+                        symptoms_list: temp >= 38.0 ? ["Fever"] : [],
+                        has_fever: temp >= 38.0,
+                        body_temperature: temp
+                    },
+                    truthful_declaration: true
+                };
+
+                const res = await OutbreakAPI.submitTravellerDeclaration(payload);
+                alert(`Direct intake recorded! Reference: ${res.reference_code}`);
+                document.getElementById('staff-intake-form').reset();
+                loadQueueTable();
+                handleTokenResolution(res.reference_code);
+                showStaffTab('scan');
+            } catch (err) {
+                alert("Intake submission error: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-check mr-1.5"></i> Save Declaration & Issue Pass`;
+            }
+        });
 
         async function loadAuditTrail() {
             try {
@@ -514,78 +994,6 @@
                 console.error(err);
             }
         }
-
-        async function loadRecordsTable() {
-            try {
-                const list = await OutbreakAPI.getStaffSubmissions();
-                const tbody = document.getElementById('records-tbody');
-                if (!list.length) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">No declarations recorded.</td></tr>`;
-                    return;
-                }
-
-                tbody.innerHTML = list.map(s => `
-                    <tr class="hover:bg-slate-50 transition cursor-pointer" onclick="selectTraveller('${s.traveller.full_name}', '${s.traveller.nationality}', '${s.flight_number}', '${s.preliminary_risk_category}', '${(s.itinerary || []).map(i => i.country_name).join(', ')}')">
-                        <td class="p-3 font-semibold text-slate-800">${s.traveller.full_name}</td>
-                        <td class="p-3">
-                            <span class="inline-flex items-center text-xs font-semibold ${s.preliminary_risk_category === 'HIGH' ? 'text-red-600' : 'text-emerald-600'}">
-                                <span class="w-2 h-2 rounded-full ${s.preliminary_risk_category === 'HIGH' ? 'bg-red-600' : 'bg-emerald-600'} mr-1.5"></span> ${s.preliminary_risk_category}
-                            </span>
-                        </td>
-                        <td class="p-3 text-slate-500">${new Date(s.arrival_date_time).toLocaleDateString()}</td>
-                        <td class="p-3 text-right">
-                            <button class="p-1 text-slate-400 hover:text-blue-600"><i class="fa-solid fa-eye"></i></button>
-                        </td>
-                    </tr>
-                `).join('');
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        function selectTraveller(name, nat, flight, risk, history) {
-            document.getElementById('info-name').textContent = name;
-            document.getElementById('info-nat').textContent = nat;
-            document.getElementById('info-flight').textContent = flight;
-            document.getElementById('info-history').textContent = history || 'N/A';
-
-            const banner = document.getElementById('status-banner');
-            const bannerText = document.getElementById('banner-text');
-            const pill = document.getElementById('risk-pill');
-
-            if (risk === 'HIGH' || risk === 'High Risk') {
-                banner.className = "p-2.5 rounded-lg bg-red-100 border border-red-200 flex items-center justify-center text-xs font-bold text-red-700";
-                bannerText.textContent = "High Risk Exposure Identified";
-                pill.className = "px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-200";
-                pill.textContent = "High Risk";
-            } else {
-                banner.className = "p-2.5 rounded-lg bg-[#eaf7ee] border border-[#c7ecd2] flex items-center justify-center text-xs font-bold text-[#1e6b36]";
-                bannerText.textContent = "No Identified Exposure";
-                pill.className = "px-3 py-1 rounded-full text-xs font-bold bg-[#eaf7ee] text-[#1e6b36] border border-[#c7ecd2]";
-                pill.textContent = "Low Risk";
-            }
-            switchView('scan');
-        }
-
-        function openFullDetailsModal() {
-            document.getElementById('mod-name').textContent = document.getElementById('info-name').textContent;
-            document.getElementById('mod-nat').textContent = document.getElementById('info-nat').textContent;
-            document.getElementById('mod-flight').textContent = document.getElementById('info-flight').textContent;
-            document.getElementById('full-modal').classList.remove('hidden');
-        }
-
-        // Camera init
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 200 });
-                scanner.render(() => {
-                    selectTraveller('Fatoumatta Jaiteh', 'Gambia', 'QR742', 'No Risk', 'Guinea, Sierra Leone');
-                }, () => {});
-            } catch (e) {
-                console.warn(e);
-            }
-        });
     </script>
-    <script src="../assets/js/loader.js"></script>
 </body>
 </html>

@@ -7,7 +7,8 @@ from app.core.supabase import get_supabase_client, get_supabase_admin
 from app.schemas.screening import (
     TravellerDeclarationCreate,
     SubmissionConfirmation,
-    OfficerAssessmentRequest
+    OfficerAssessmentRequest,
+    OutbreakAreaCreate
 )
 from app.services.triage_engine import TriageEngine, RULE_SET_VERSION
 from app.services.qr_service import QRService
@@ -234,12 +235,54 @@ class ScreeningService:
     def get_submission_by_id(submission_id: str) -> Optional[dict]:
         return _STORE_SUBMISSIONS.get(submission_id)
 
-    @staticmethod
+    @classmethod
+    def _sync_from_supabase(cls):
+        """Synchronizes real passenger submissions from Supabase into memory cache."""
+        client = get_supabase_admin() or get_supabase_client()
+        if not client:
+            return
+        try:
+            res = client.table("submissions").select("*, travellers(*)").order("created_at", desc=True).execute()
+            if res.data:
+                for row in res.data:
+                    sid = row.get("id")
+                    t = row.get("travellers") or {}
+                    if sid not in _STORE_SUBMISSIONS:
+                        _STORE_SUBMISSIONS[sid] = {
+                            "id": sid,
+                            "traveller_id": row.get("traveller_id"),
+                            "reference_code": row.get("reference_code"),
+                            "flight_number": row.get("flight_number"),
+                            "airline": row.get("airline"),
+                            "arrival_airport": row.get("arrival_airport"),
+                            "arrival_date_time": row.get("arrival_date_time"),
+                            "submitted_at": row.get("submitted_at") or row.get("created_at"),
+                            "status": row.get("status"),
+                            "preliminary_risk_category": row.get("preliminary_risk_category"),
+                            "urgent_symptom_flag": row.get("urgent_symptom_flag", False),
+                            "manual_review_reasons": row.get("manual_review_reasons") or [],
+                            "traveller": {
+                                "id": t.get("id"),
+                                "full_name": t.get("full_name") or "Traveller",
+                                "date_of_birth": t.get("date_of_birth"),
+                                "sex": t.get("sex"),
+                                "nationality": t.get("nationality"),
+                                "phone_number": t.get("phone_number"),
+                                "passport_number": t.get("passport_number"),
+                                "address_in_gambia": t.get("address_in_gambia")
+                            }
+                        }
+        except Exception as e:
+            logger.warning(f"Supabase sync warning: {e}")
+
+    @classmethod
     def list_submissions(
+        cls,
         risk_category: Optional[str] = None,
         status: Optional[str] = None,
         flight_number: Optional[str] = None
     ) -> List[dict]:
+        cls._sync_from_supabase()
         subs = list(_STORE_SUBMISSIONS.values())
         if risk_category:
             subs = [s for s in subs if s.get("preliminary_risk_category") == risk_category]
@@ -302,8 +345,9 @@ class ScreeningService:
         sub["status"] = "awaiting_review"
         return True
 
-    @staticmethod
-    def get_dashboard_summary() -> dict:
+    @classmethod
+    def get_dashboard_summary(cls) -> dict:
+        cls._sync_from_supabase()
         subs = list(_STORE_SUBMISSIONS.values())
         total = len(subs)
         urgent = len([s for s in subs if s.get("urgent_symptom_flag")])
@@ -337,112 +381,112 @@ class ScreeningService:
             ][:5]
         }
 
+    # --------------------------------------------------------------------------
+    # OUTBREAK AREAS MANAGEMENT (Dynamic CRUD with Supabase & Memory Cache)
+    # --------------------------------------------------------------------------
+    @classmethod
+    def list_outbreak_areas(cls) -> List[dict]:
+        client = get_supabase_admin() or get_supabase_client()
+        if client:
+            try:
+                res = client.table("outbreak_areas").select("*").order("created_at", desc=True).execute()
+                if res.data:
+                    return res.data
+            except Exception as e:
+                logger.warning(f"Supabase list_outbreak_areas error: {e}")
+
+        # Fallback default outbreak areas if offline
+        return [
+            {
+                "id": "uganda-sudan-ebola",
+                "disease_name": "Ebola Virus Disease (Sudan Strain)",
+                "country_code": "UGA",
+                "country_name": "Uganda",
+                "affected_regions": ["Mubende", "Kassanda", "Kampala", "Kagadi"],
+                "status": "active",
+                "valid_from": "2026-01-01",
+                "official_source": "Ministry of Health / WHO Outbreak Disease News",
+                "guidance_notes": "Active outbreak surveillance for travellers arriving from Uganda or border transit corridors."
+            },
+            {
+                "id": "drc-zaire-ebola",
+                "disease_name": "Ebola Virus Disease (Zaire Strain)",
+                "country_code": "COD",
+                "country_name": "Democratic Republic of the Congo",
+                "affected_regions": ["North Kivu", "Ituri", "Beni"],
+                "status": "active",
+                "valid_from": "2026-01-01",
+                "official_source": "Ministry of Health / WHO Outbreak Disease News",
+                "guidance_notes": "Vigilance for individuals with contact or healthcare exposure in Beni/Butembo."
+            }
+        ]
+
+    @classmethod
+    def create_outbreak_area(cls, area_data: OutbreakAreaCreate) -> dict:
+        client = get_supabase_admin() or get_supabase_client()
+        area_id = str(uuid.uuid4())
+        record = {
+            "id": area_id,
+            "disease_name": area_data.disease_name,
+            "country_code": area_data.country_code.upper(),
+            "country_name": area_data.country_name,
+            "affected_regions": area_data.affected_regions,
+            "status": area_data.status,
+            "official_source": area_data.official_source or "Ministry of Health / WHO Outbreak News",
+            "guidance_notes": area_data.guidance_notes or f"Heightened surveillance for arrivals from {area_data.country_name}.",
+            "valid_from": (area_data.valid_from or date.today()).isoformat()
+        }
+        if area_data.valid_to:
+            record["valid_to"] = area_data.valid_to.isoformat()
+
+        if client:
+            try:
+                res = client.table("outbreak_areas").insert(record).execute()
+                if res.data and len(res.data) > 0:
+                    return res.data[0]
+            except Exception as e:
+                logger.error(f"Failed to insert outbreak area in Supabase: {e}")
+                raise
+
+        return record
+
+    @classmethod
+    def update_outbreak_area(cls, area_id: str, updates: dict) -> dict:
+        client = get_supabase_admin() or get_supabase_client()
+        clean_updates = {}
+        for k, v in updates.items():
+            if v is not None:
+                if isinstance(v, (date, datetime)):
+                    clean_updates[k] = v.isoformat()
+                elif k == "country_code" and isinstance(v, str):
+                    clean_updates[k] = v.upper()
+                else:
+                    clean_updates[k] = v
+
+        if client and clean_updates:
+            try:
+                res = client.table("outbreak_areas").update(clean_updates).eq("id", area_id).execute()
+                if res.data and len(res.data) > 0:
+                    return res.data[0]
+            except Exception as e:
+                logger.error(f"Failed to update outbreak area {area_id}: {e}")
+                raise
+        return clean_updates
+
+    @classmethod
+    def delete_outbreak_area(cls, area_id: str) -> bool:
+        client = get_supabase_admin() or get_supabase_client()
+        if client:
+            try:
+                client.table("outbreak_areas").delete().eq("id", area_id).execute()
+                return True
+            except Exception as e:
+                logger.error(f"Failed to delete outbreak area {area_id}: {e}")
+                raise
+        return True
+
     @classmethod
     def seed_demo_data(cls):
-        """Pre-populates demonstration cases for rapid verification and training."""
-        if _STORE_SUBMISSIONS:
-            return
-
-        from app.schemas.screening import (
-            PersonalInformation,
-            ItineraryEntry,
-            ExposureEvent,
-            HealthcareEvent,
-            EnvironmentalEvent,
-            SymptomReport,
-            TravellerDeclarationCreate
-        )
-
-        demo1 = TravellerDeclarationCreate(
-            personal=PersonalInformation(
-                full_name="Khadija S. Camara",
-                date_of_birth=date(1992, 5, 14),
-                sex="female",
-                nationality="The Gambia",
-                residence_country="The Gambia",
-                passport_number="GAM8829104",
-                phone_number="+220 732 9911",
-                email="khadija.camara@gambiahealth.gm",
-                address_in_gambia="Fajara M Section, Bakau, Kanifing Municipality",
-                flight_number="SN241",
-                airline="Brussels Airlines",
-                arrival_airport="Banjul International Airport (BJL)",
-                arrival_date_time=datetime.now(timezone.utc) + timedelta(hours=3)
-            ),
-            itinerary=[
-                ItineraryEntry(
-                    country_name="Uganda",
-                    city_or_district="Mubende District",
-                    entry_date=date(2026, 10, 15),
-                    departure_date=date(2026, 11, 2),
-                    purpose_of_visit="Humanitarian work",
-                    accommodation_type="Healthcare facility"
-                )
-            ],
-            exposures=[
-                ExposureEvent(
-                    question_key="direct_contact",
-                    question_label="Direct contact with anyone diagnosed with Ebola",
-                    answer="Yes",
-                    exposure_date=date(2026, 10, 28),
-                    location_details="Mubende Referral Clinic",
-                    contact_type="Patient care / assisting triage",
-                    ppe_used="Yes - Full protective gear",
-                    ppe_failure_or_breach=False
-                )
-            ],
-            healthcare=[
-                HealthcareEvent(
-                    event_type="Worked in an Ebola treatment facility",
-                    answer="Yes",
-                    facility_name="Mubende Isolation Center",
-                    role_or_occupation="Infection Control Nurse"
-                )
-            ],
-            environmental=[],
-            symptoms=SymptomReport(
-                symptoms_list=["Severe headache", "Extreme tiredness"],
-                has_fever=False,
-                body_temperature=37.2
-            ),
-            truthful_declaration=True
-        )
-
-        demo2 = TravellerDeclarationCreate(
-            personal=PersonalInformation(
-                full_name="Ebrima Barrow",
-                date_of_birth=date(1985, 9, 21),
-                sex="male",
-                nationality="Senegal",
-                residence_country="Senegal",
-                passport_number="SN0091244",
-                phone_number="+221 77 123 4567",
-                email="ebrima.barrow@trade.sn",
-                address_in_gambia="Senegambia Beach Hotel, Kololi",
-                flight_number="W3302",
-                airline="Arik Air",
-                arrival_airport="Banjul International Airport (BJL)",
-                arrival_date_time=datetime.now(timezone.utc) + timedelta(hours=1)
-            ),
-            itinerary=[
-                ItineraryEntry(
-                    country_name="Senegal",
-                    city_or_district="Dakar",
-                    entry_date=date(2026, 10, 20),
-                    departure_date=date(2026, 11, 5),
-                    purpose_of_visit="Business",
-                    accommodation_type="Hotel"
-                )
-            ],
-            exposures=[],
-            healthcare=[],
-            environmental=[],
-            symptoms=SymptomReport(symptoms_list=[]),
-            truthful_declaration=True
-        )
-
-        cls.process_declaration(demo1)
-        cls.process_declaration(demo2)
-
-ScreeningService.seed_demo_data()
+        """Demo auto-seeding is permanently disabled to keep production database clean."""
+        pass
 
